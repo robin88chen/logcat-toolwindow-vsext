@@ -51,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AdbAgent.cs" />
     <Compile Include="LogcatOutputToolWindow.cs" />
     <Compile Include="LogcatOutputToolWindowCommand.cs" />
     <Compile Include="LogcatOutputToolWindowControl.xaml.cs">

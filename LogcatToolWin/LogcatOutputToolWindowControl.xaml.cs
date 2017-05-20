@@ -15,12 +15,36 @@ namespace LogcatToolWin
     /// </summary>
     public partial class LogcatOutputToolWindowControl : UserControl
     {
+        AdbAgent adb = new AdbAgent();
         /// <summary>
         /// Initializes a new instance of the <see cref="LogcatOutputToolWindowControl"/> class.
         /// </summary>
         public LogcatOutputToolWindowControl()
         {
             this.InitializeComponent();
+            this.Loaded += new RoutedEventHandler(OnLoadedHandler);
+        }
+
+        void OnLoadedHandler(object sender, RoutedEventArgs ev)
+        {
+            AdbAgent.OnDeviceChecked += OnDeviceChecked;
+            adb.CheckAdbDevice();
+        }
+
+        void OnDeviceChecked(string device_name, bool is_ready)
+        {
+            string msg = device_name;
+            if (is_ready)
+            {
+                msg += " (Online)";
+            }
+            else
+            {
+                msg += " (Offline)";
+            }
+            this.Dispatcher.Invoke(() => { DeviceStateLabel.Content = msg; });
+            //Instance.DeviceStateLabel.Content = "Device"; // device_name as object;
+
         }
 
         /// <summary>
