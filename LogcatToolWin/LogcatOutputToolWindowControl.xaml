@@ -9,8 +9,8 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <ToolBar Height="36" VerticalContentAlignment="Bottom">
+        <DockPanel>
+            <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top">
                 <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
                     <Button.Background>
                         <ImageBrush ImageSource="Resources/MobileDeviceIcon.png" Stretch="None"/>
@@ -18,7 +18,7 @@
                 </Button>
                 <Label x:Name="DeviceStateLabel" Content="Online" Height="31" VerticalAlignment="Top"/>
             </ToolBar>
-            <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Height="296">
+            <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="0,0,0,4" HorizontalContentAlignment="Stretch">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Level" Width="60" DisplayMemberBinding="{Binding LevelToken}"/>
@@ -29,6 +29,6 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-        </StackPanel>
+        </DockPanel>
     </Grid>
 </UserControl>
