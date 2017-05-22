@@ -11,15 +11,24 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <ToolBar Height="36" VerticalContentAlignment="Bottom">
-                <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device">
+                <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
                     <Button.Background>
                         <ImageBrush ImageSource="Resources/MobileDeviceIcon.png" Stretch="None"/>
                     </Button.Background>
                 </Button>
                 <Label x:Name="DeviceStateLabel" Content="Online" Height="31" VerticalAlignment="Top"/>
             </ToolBar>
-            <Button Content="Click me!" Click="button1_Click" Width="120" Height="39" x:Name="button1" Margin="90,0"/>
-            <TextBlock x:Name="OutputLogTextBlock" TextWrapping="Wrap" Text="TextBlock"/>
+            <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Height="296">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Level" Width="60" DisplayMemberBinding="{Binding LevelToken}"/>
+                        <GridViewColumn Header="Time" Width="120" DisplayMemberBinding="{Binding TimeToken}"/>
+                        <GridViewColumn Header="PID" Width="60" DisplayMemberBinding="{Binding PidToken}"/>
+                        <GridViewColumn Header="Tag" Width="120" DisplayMemberBinding="{Binding TagToken}"/>
+                        <GridViewColumn Header="Text" Width="600" DisplayMemberBinding="{Binding TextToken}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </StackPanel>
     </Grid>
 </UserControl>

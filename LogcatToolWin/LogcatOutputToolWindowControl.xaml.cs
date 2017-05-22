@@ -16,6 +16,15 @@ namespace LogcatToolWin
     public partial class LogcatOutputToolWindowControl : UserControl
     {
         AdbAgent adb = new AdbAgent();
+
+        class LogcatItem
+        {
+            public string LevelToken { get; set; }
+            public string TimeToken { get; set; }
+            public string PidToken { get; set; }
+            public string TagToken { get; set; }
+            public string TextToken { get; set; }
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="LogcatOutputToolWindowControl"/> class.
         /// </summary>
@@ -23,12 +32,21 @@ namespace LogcatToolWin
         {
             this.InitializeComponent();
             this.Loaded += new RoutedEventHandler(OnLoadedHandler);
+            this.Unloaded += new RoutedEventHandler(OnUnloadedHandler);
         }
 
         void OnLoadedHandler(object sender, RoutedEventArgs ev)
         {
             AdbAgent.OnDeviceChecked += OnDeviceChecked;
+            AdbAgent.OnOutputLogcat += OnLogcatOutput;
             adb.CheckAdbDevice();
+        }
+
+        void OnUnloadedHandler(object sender, RoutedEventArgs ev)
+        {
+            AdbAgent.OnOutputLogcat -= OnLogcatOutput;
+            AdbAgent.OnDeviceChecked -= OnDeviceChecked;
+            adb.StopAdbLogcat();
         }
 
         void OnDeviceChecked(string device_name, bool is_ready)
@@ -42,9 +60,33 @@ namespace LogcatToolWin
             {
                 msg += " (Offline)";
             }
-            this.Dispatcher.Invoke(() => { DeviceStateLabel.Content = msg; });
+            //if ((!Dispatcher.HasShutdownStarted) && (!Dispatcher.HasShutdownFinished))
+            {
+                Dispatcher.Invoke(() => { DeviceStateLabel.Content = msg; });
+            }
+            if (is_ready)
+            {
+                adb.StartAdbLogcat();
+            }
             //Instance.DeviceStateLabel.Content = "Device"; // device_name as object;
 
+        }
+
+        void OnLogcatOutput(string level_token, string time_token, string pid_token,
+            string tag_token, string msg_token)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                LogcatList.Items.Add(new LogcatItem()
+                {
+                    LevelToken = level_token, TimeToken = time_token,
+                    PidToken = pid_token, TagToken = tag_token, TextToken = msg_token
+                });
+            });
+            //if ((!Dispatcher.HasShutdownStarted) && (!Dispatcher.HasShutdownFinished))
+            {
+                //Dispatcher.InvokeAsync(() => { OutputLogTextBlock.Text = msg + "\n"; });
+            }
         }
 
         /// <summary>
@@ -59,6 +101,11 @@ namespace LogcatToolWin
             MessageBox.Show(
                 string.Format(System.Globalization.CultureInfo.CurrentUICulture, "Invoked '{0}'", this.ToString()),
                 "LogcatOutputToolWindow");
+        }
+
+        private void ConnectDevice_OnClick(object sender, RoutedEventArgs e)
+        {
+            adb.CheckAdbDevice();
         }
     }
 }

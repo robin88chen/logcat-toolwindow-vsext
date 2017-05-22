@@ -23,11 +23,12 @@ namespace LogcatToolWin
 
     class AdbAgent
     {
-        public static Action<string> OnOutputLogcat;
+        public static Action<string, string, string, string, string> OnOutputLogcat;
         public bool IsDeviceReady = false;
         public string DeviceName;
         public static Action<string, bool> OnDeviceChecked;
 
+        Process outputProcess;
         public AdbAgent()
         {
         }
@@ -135,20 +136,21 @@ namespace LogcatToolWin
         }
         public void ProceedAdbCommandToOutput(string cmd, DataReceivedEventHandler handler)
         {
-            Process process = new Process();
+            outputProcess = new Process();
             string full_cmd = "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
-            process.StartInfo.FileName = full_cmd;
-            process.StartInfo.Arguments = cmd; // "/c DIR"; // Note the /c command (*)
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.OutputDataReceived += handler;
-            process.ErrorDataReceived += handler;
+            outputProcess.StartInfo.FileName = full_cmd;
+            outputProcess.StartInfo.Arguments = cmd; // "/c DIR"; // Note the /c command (*)
+            outputProcess.StartInfo.UseShellExecute = false;
+            outputProcess.StartInfo.RedirectStandardOutput = true;
+            outputProcess.StartInfo.RedirectStandardError = true;
+            outputProcess.StartInfo.CreateNoWindow = true;
+            outputProcess.OutputDataReceived += handler;
+            outputProcess.ErrorDataReceived += handler;
             //* Start process and handlers
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            outputProcess.Start();
+            outputProcess.PriorityClass = ProcessPriorityClass.Idle;
+            outputProcess.BeginOutputReadLine();
+            outputProcess.BeginErrorReadLine();
             //process.WaitForExit();
             //* Read the output (or the error)
             //string output = process.StandardOutput.ReadToEnd();
@@ -163,7 +165,17 @@ namespace LogcatToolWin
         }
         public void StartAdbLogcat()
         {
-            ProceedAdbCommandToOutput("logcat", new DataReceivedEventHandler(OutputHandler));
+            ProceedAdbCommandToOutput("logcat -v time", new DataReceivedEventHandler(OutputHandler));
+        }
+        public void StopAdbLogcat()
+        {
+            if (outputProcess != null)
+            {
+                outputProcess.CancelErrorRead();
+                outputProcess.CancelOutputRead();
+                outputProcess.Close();
+                outputProcess = null;
+            }
         }
         void AdbCheckDeviceHandler(object sender, System.EventArgs ev)
         {
@@ -185,12 +197,25 @@ namespace LogcatToolWin
         }
         static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            //* Do your stuff with the output (write to console/log/StringBuilder)
-            if (OnOutputLogcat != null)
-            {
-                OnOutputLogcat(outLine.Data);
-            }
-            //Console.WriteLine(outLine.Data);
+            if (OnOutputLogcat == null) return;
+
+            string msg = outLine.Data;
+            if ((msg == null) || (msg.Length == 0)) return;
+            int time_split = msg.IndexOf(' ', 7);
+            if (time_split == -1) return;
+            string time_token = msg.Substring(0, time_split);
+            msg = msg.Substring(time_split + 1);
+            string level_token = msg.Substring(0, 1);
+            msg = msg.Substring(2);
+            int tag_split = msg.IndexOf('(');
+            if (tag_split == -1) return;
+            string tag_token = msg.Substring(0, tag_split);
+            msg = msg.Substring(tag_split + 1);
+            int pid_split = msg.IndexOf(')');
+            if (pid_split == -1) return;
+            string pid_token = msg.Substring(0, pid_split);
+            string msg_token = msg.Substring(pid_split + 2);
+            OnOutputLogcat(level_token, time_token, pid_token, tag_token, msg_token);
         }
     }
 }
