@@ -32,6 +32,10 @@ namespace LogcatToolWin
         public AdbAgent()
         {
         }
+        ~AdbAgent()
+        {
+            StopAdbLogcat();
+        }
         /*[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool CreatePipe(ref IntPtr hReadPipe, ref IntPtr hWritePipe, IntPtr lpPipeAttributes, DWORD nSize);
         [DllImport("Kernel32.dll")]
@@ -173,7 +177,9 @@ namespace LogcatToolWin
             {
                 outputProcess.CancelErrorRead();
                 outputProcess.CancelOutputRead();
-                outputProcess.Close();
+                //outputProcess.CloseMainWindow();
+                //outputProcess.Close();
+                outputProcess.Kill();
                 outputProcess = null;
             }
         }

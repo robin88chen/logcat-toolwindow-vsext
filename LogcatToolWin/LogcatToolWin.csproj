@@ -72,6 +72,8 @@
     <VSCTCompile Include="LogcatOutputToolWindowPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
+    <Resource Include="Resources\Block.png" />
+    <Resource Include="Resources\ClearAll.png" />
     <Content Include="Resources\LogcatOutputToolWindowCommand.png" />
     <Content Include="Resources\LogcatOutputToolWindowPackage.ico" />
     <Resource Include="Resources\MobileDeviceIcon.png" />

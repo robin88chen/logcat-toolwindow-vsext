@@ -17,6 +17,8 @@ namespace LogcatToolWin
     {
         AdbAgent adb = new AdbAgent();
 
+        int LogLimitCount = 20000;
+
         class LogcatItem
         {
             public string LevelToken { get; set; }
@@ -77,6 +79,10 @@ namespace LogcatToolWin
         {
             Dispatcher.InvokeAsync(() =>
             {
+                if (LogcatList.Items.Count > LogLimitCount)
+                {
+                    LogcatList.Items.RemoveAt(0);
+                }
                 LogcatList.Items.Add(new LogcatItem()
                 {
                     LevelToken = level_token, TimeToken = time_token,
@@ -107,5 +113,37 @@ namespace LogcatToolWin
         {
             adb.CheckAdbDevice();
         }
+
+        private void CancelLogcat_OnClick(object sender, RoutedEventArgs e)
+        {
+            adb.StopAdbLogcat();
+        }
+
+        private void ClearLogs_OnClick(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                LogcatList.Items.Clear();
+            });
+        }
+
+        private void TestFilter_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (LogcatList.Items.Filter == null)
+            {
+                LogcatList.Items.Filter = (item) =>
+                {
+                    LogcatItem log = item as LogcatItem;
+                    if (log == null) return false;
+                    if (log.LevelToken == "D") return true;
+                    return false;
+                };
+            }
+            else
+            {
+                LogcatList.Items.Filter = null;
+            }
+        }
+        
     }
 }

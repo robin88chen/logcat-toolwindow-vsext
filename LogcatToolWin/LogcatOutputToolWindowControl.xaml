@@ -13,10 +13,21 @@
             <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top">
                 <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
                     <Button.Background>
-                        <ImageBrush ImageSource="Resources/MobileDeviceIcon.png" Stretch="None"/>
+                        <ImageBrush ImageSource="Resources/MobileDeviceIcon.png"/>
                     </Button.Background>
                 </Button>
                 <Label x:Name="DeviceStateLabel" Content="Online" Height="31" VerticalAlignment="Top"/>
+                <Button x:Name="CancelLogcatButton" Content="" Height="30" VerticalAlignment="Top" Width="30" Click="CancelLogcat_OnClick" ToolTip="Cancel Logcat">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Resources/Block.png"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="ClearLogsButton" Content="" Height="30" VerticalAlignment="Top" Width="30" ToolTip="Clear All Logs" Click="ClearLogs_OnClick">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Resources/ClearAll.png"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="TestFilterButton" Content="Button" Height="31" VerticalAlignment="Top" Width="75" Click="TestFilter_OnClick"/>
             </ToolBar>
             <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="0,0,0,4" HorizontalContentAlignment="Stretch">
                 <ListView.View>
