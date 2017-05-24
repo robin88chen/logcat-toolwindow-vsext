@@ -6,6 +6,9 @@
 
 namespace LogcatToolWin
 {
+    using Microsoft.VisualStudio.Settings;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Settings;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
@@ -15,9 +18,9 @@ namespace LogcatToolWin
     /// </summary>
     public partial class LogcatOutputToolWindowControl : UserControl
     {
-        AdbAgent adb = new AdbAgent();
+        public AdbAgent adb = new AdbAgent();
 
-        int LogLimitCount = 20000;
+        public uint LogLimitCount = 20000;
 
         class LogcatItem
         {
@@ -39,6 +42,8 @@ namespace LogcatToolWin
 
         void OnLoadedHandler(object sender, RoutedEventArgs ev)
         {
+            LoadSettings();
+            AdbAgent.ToOpenSettingDlg += OpenSettingDialog;
             AdbAgent.OnDeviceChecked += OnDeviceChecked;
             AdbAgent.OnOutputLogcat += OnLogcatOutput;
             adb.CheckAdbDevice();
@@ -46,9 +51,20 @@ namespace LogcatToolWin
 
         void OnUnloadedHandler(object sender, RoutedEventArgs ev)
         {
+            AdbAgent.ToOpenSettingDlg -= OpenSettingDialog;
             AdbAgent.OnOutputLogcat -= OnLogcatOutput;
             AdbAgent.OnDeviceChecked -= OnDeviceChecked;
             adb.StopAdbLogcat();
+        }
+
+        void LoadSettings()
+        {
+            SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
+            WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            string adb_path = configurationSettingsStore.GetString("LogcatSettings", "AdbPath", "");
+            uint log_limit = configurationSettingsStore.GetUInt32("LogcatSettings", "LogsLimit", 20000);
+            LogLimitCount = log_limit;
+            adb.AdbExePath = adb_path;
         }
 
         void OnDeviceChecked(string device_name, bool is_ready)
@@ -147,7 +163,13 @@ namespace LogcatToolWin
 
         private void Setting_OnClick(object sender, RoutedEventArgs e)
         {
+            OpenSettingDialog();
+        }
 
+        void OpenSettingDialog()
+        {
+            SettingDialog dlg = new SettingDialog(this);
+            dlg.ShowModal();
         }
     }
 }

@@ -21,12 +21,14 @@ namespace LogcatToolWin
         public bool bInheritHandle;
     }*/
 
-    class AdbAgent
+    public class AdbAgent
     {
         public static Action<string, string, string, string, string> OnOutputLogcat;
         public bool IsDeviceReady = false;
         public string DeviceName;
         public static Action<string, bool> OnDeviceChecked;
+        public string AdbExePath;
+        public static Action ToOpenSettingDlg;
 
         Process outputProcess;
         public AdbAgent()
@@ -115,7 +117,7 @@ namespace LogcatToolWin
         public void ProceedAdbCommandToExit(string cmd, EventHandler handler)
         {
             Process process = new Process();
-            string full_cmd = "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
+            string full_cmd = AdbExePath + " "; // "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
             process.StartInfo.FileName = full_cmd;
             process.StartInfo.Arguments = cmd; // "/c DIR"; // Note the /c command (*)
             process.StartInfo.UseShellExecute = false;
@@ -127,7 +129,18 @@ namespace LogcatToolWin
             //process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
             //process.ErrorDataReceived += new DataReceivedEventHandler(OutputHandler);
             //* Start process and handlers
-            process.Start();
+            try
+            {
+                process.Start();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Can't Start adb.exe, please setup AdbExePath");
+                if (ToOpenSettingDlg != null)
+                {
+                    ToOpenSettingDlg();
+                }
+            }
             //process.BeginOutputReadLine();
             //process.BeginErrorReadLine();
             //process.WaitForExit();
@@ -141,7 +154,7 @@ namespace LogcatToolWin
         public void ProceedAdbCommandToOutput(string cmd, DataReceivedEventHandler handler)
         {
             outputProcess = new Process();
-            string full_cmd = "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
+            string full_cmd = AdbExePath + " "; // "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
             outputProcess.StartInfo.FileName = full_cmd;
             outputProcess.StartInfo.Arguments = cmd; // "/c DIR"; // Note the /c command (*)
             outputProcess.StartInfo.UseShellExecute = false;
@@ -151,10 +164,21 @@ namespace LogcatToolWin
             outputProcess.OutputDataReceived += handler;
             outputProcess.ErrorDataReceived += handler;
             //* Start process and handlers
-            outputProcess.Start();
-            outputProcess.PriorityClass = ProcessPriorityClass.Idle;
-            outputProcess.BeginOutputReadLine();
-            outputProcess.BeginErrorReadLine();
+            try
+            {
+                outputProcess.Start();
+                outputProcess.PriorityClass = ProcessPriorityClass.Idle;
+                outputProcess.BeginOutputReadLine();
+                outputProcess.BeginErrorReadLine();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Can't Start adb.exe, please setup AdbExePath");
+                if (ToOpenSettingDlg != null)
+                {
+                    ToOpenSettingDlg();
+                }
+            }
             //process.WaitForExit();
             //* Read the output (or the error)
             //string output = process.StandardOutput.ReadToEnd();

@@ -67,7 +67,7 @@ namespace LogcatToolWin
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private IServiceProvider ServiceProvider
+        public IServiceProvider ServiceProvider
         {
             get
             {
