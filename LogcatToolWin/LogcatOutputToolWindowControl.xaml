@@ -6,7 +6,7 @@
              Background="{DynamicResource VsBrush.Window}"
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300"
              Name="MyToolWindow">
     <Grid>
         <DockPanel>
@@ -22,14 +22,18 @@
                         <ImageBrush ImageSource="Resources/Block.png"/>
                     </Button.Background>
                 </Button>
-                <Button x:Name="ClearLogsButton" Content="" Height="30" VerticalAlignment="Top" Width="30" ToolTip="Clear All Logs" Click="ClearLogs_OnClick">
+                <Label Content="Cancel Logcat"/>
+                <Button x:Name="ClearLogsButton" Height="30" VerticalAlignment="Top" Width="30" ToolTip="Clear All Logs" Click="ClearLogs_OnClick">
                     <Button.Background>
                         <ImageBrush ImageSource="Resources/ClearAll.png"/>
                     </Button.Background>
                 </Button>
+                <Label Content="Clear Logs"/>
                 <Button x:Name="TestFilterButton" Content="Button" Height="31" VerticalAlignment="Top" Width="75" Click="TestFilter_OnClick"/>
+                <Button x:Name="SettingButton" Content="Setting" Height="31" VerticalAlignment="Top" Width="75" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Click="Setting_OnClick"/>
             </ToolBar>
-            <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="0,0,0,4" HorizontalContentAlignment="Stretch">
+            <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4"/>
+            <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="4" HorizontalContentAlignment="Stretch">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Level" Width="60" DisplayMemberBinding="{Binding LevelToken}"/>

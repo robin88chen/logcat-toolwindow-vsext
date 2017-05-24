@@ -144,6 +144,10 @@ namespace LogcatToolWin
                 LogcatList.Items.Filter = null;
             }
         }
-        
+
+        private void Setting_OnClick(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
