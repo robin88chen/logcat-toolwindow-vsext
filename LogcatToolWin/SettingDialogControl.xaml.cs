@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell.Settings;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,18 @@ namespace LogcatToolWin
         private void Cancel_OnClick(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Browse_OnClick(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.DefaultExt = "exe";
+            dlg.Filter = "Adb Exe|adb.exe";
+            bool? file_ok = dlg.ShowDialog();
+            if (file_ok == true)
+            {
+                Dispatcher.InvokeAsync(() => AdbPathText.Text = dlg.FileName);
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace LogcatToolWin
         public SettingDialog(LogcatOutputToolWindowControl tool_ctrl) : base()
         {
             Title = "Adb Logcat Setting";
-            Height = 180;
+            Height = 200;
             Width = 320;
             SettingDialogControl.ToClose = CloseDialog;
             Content = new SettingDialogControl(tool_ctrl);
