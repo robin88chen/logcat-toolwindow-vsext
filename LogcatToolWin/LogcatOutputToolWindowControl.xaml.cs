@@ -10,8 +10,12 @@ namespace LogcatToolWin
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Settings;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Markup;
+    using System.Xml;
+    using System.Windows.Input;
 
     /// <summary>
     /// Interaction logic for LogcatOutputToolWindowControl.
@@ -22,6 +26,8 @@ namespace LogcatToolWin
 
         public uint LogLimitCount = 20000;
 
+        public static RoutedCommand DeleteFilter = new RoutedCommand();
+        public static RoutedCommand EditFilter = new RoutedCommand();
         class LogcatItem
         {
             public string LevelToken { get; set; }
@@ -38,6 +44,14 @@ namespace LogcatToolWin
             this.InitializeComponent();
             this.Loaded += new RoutedEventHandler(OnLoadedHandler);
             this.Unloaded += new RoutedEventHandler(OnUnloadedHandler);
+
+            // attach CommandBinding to root window
+            this.CommandBindings.Add(new CommandBinding(
+                          DeleteFilter, ExecuteDeleteFilterCommand, CanExecuteCustomCommand));
+            this.CommandBindings.Add(new CommandBinding(
+                          EditFilter, ExecuteEditFilterCommand, CanExecuteCustomCommand));
+            //MenuItem it = FilterTemplateItem.ContextMenu.Items[0] as MenuItem;
+            //it.Command = DeleteFilter;
         }
 
         void OnLoadedHandler(object sender, RoutedEventArgs ev)
@@ -170,6 +184,48 @@ namespace LogcatToolWin
         {
             SettingDialog dlg = new SettingDialog(this);
             dlg.ShowModal();
+        }
+
+        private void AddFilter_OnClick(object sender, RoutedEventArgs e)
+        {
+            string xaml_item = XamlWriter.Save(FilterTemplateItem);
+            StringReader stringReader = new StringReader(xaml_item);
+            XmlReader xmlReader = XmlReader.Create(stringReader);
+            CheckBox newItem = (CheckBox)XamlReader.Load(xmlReader);
+            newItem.Name = "FilterClone1";
+            newItem.Content = "FilterClone1";
+            newItem.Visibility = Visibility.Visible;
+            MenuItem it = newItem.ContextMenu.Items[0] as MenuItem;
+            it.Command = DeleteFilter;
+            it = newItem.ContextMenu.Items[1] as MenuItem;
+            it.Command = EditFilter;
+            FilterListBox.Items.Add(newItem);
+        }
+
+        void ExecuteDeleteFilterCommand(object sender, ExecutedRoutedEventArgs ev)
+        {
+            ListBoxItem it = ev.OriginalSource as ListBoxItem;
+            int index = FilterListBox.Items.IndexOf(it.Content);
+            FilterListBox.Items.Remove(it.Content);
+            MessageBox.Show("Delete Filter");
+        }
+        void ExecuteEditFilterCommand(object sender, ExecutedRoutedEventArgs ev)
+        {
+            MessageBox.Show("Edit Filter");
+        }
+        private void CanExecuteCustomCommand(object sender,
+                    CanExecuteRoutedEventArgs e)
+        {
+            Control target = e.Source as Control;
+
+            if (target != null)
+            {
+                e.CanExecute = true;
+            }
+            else
+            {
+                e.CanExecute = false;
+            }
         }
     }
 }

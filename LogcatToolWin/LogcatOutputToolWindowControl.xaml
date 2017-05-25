@@ -32,7 +32,17 @@
                 <Button x:Name="TestFilterButton" Content="Button" Height="31" VerticalAlignment="Top" Width="75" Click="TestFilter_OnClick"/>
                 <Button x:Name="SettingButton" Content="Setting" Height="31" VerticalAlignment="Top" Width="75" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Click="Setting_OnClick"/>
             </ToolBar>
-            <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4"/>
+            <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4" HorizontalContentAlignment="Stretch">
+                <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick"/>
+                <CheckBox x:Name="FilterTemplateItem" HorizontalContentAlignment="Center" Content="FilterTemp" Visibility="Collapsed">
+                    <CheckBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete"/>
+                            <MenuItem Header="Edit..."/>
+                        </ContextMenu>
+                    </CheckBox.ContextMenu>
+                </CheckBox>
+            </ListBox>
             <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="4" HorizontalContentAlignment="Stretch">
                 <ListView.View>
                     <GridView>
