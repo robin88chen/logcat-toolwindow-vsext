@@ -23,7 +23,7 @@ namespace LogcatToolWin
 
     public class AdbAgent
     {
-        public static Action<string, string, string, string, string> OnOutputLogcat;
+        public static Action<LogcatOutputToolWindowControl.LogcatItem.Level, string, int, string, string> OnOutputLogcat;
         public bool IsDeviceReady = false;
         public string DeviceName;
         public static Action<string, bool> OnDeviceChecked;
@@ -236,6 +236,16 @@ namespace LogcatToolWin
             string time_token = msg.Substring(0, time_split);
             msg = msg.Substring(time_split + 1);
             string level_token = msg.Substring(0, 1);
+            LogcatOutputToolWindowControl.LogcatItem.Level log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Verbose;
+            switch (level_token)
+            {
+                case "V": log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Verbose; break;
+                case "D": log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Debug; break;
+                case "I": log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Info; break;
+                case "W": log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Warning; break;
+                case "E": log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Error; break;
+                case "F": log_level = LogcatOutputToolWindowControl.LogcatItem.Level.Fatal; break;
+            }
             msg = msg.Substring(2);
             int tag_split = msg.IndexOf('(');
             if (tag_split == -1) return;
@@ -244,8 +254,9 @@ namespace LogcatToolWin
             int pid_split = msg.IndexOf(')');
             if (pid_split == -1) return;
             string pid_token = msg.Substring(0, pid_split);
+            int pid = System.Convert.ToInt32(pid_token);
             string msg_token = msg.Substring(pid_split + 2);
-            OnOutputLogcat(level_token, time_token, pid_token, tag_token, msg_token);
+            OnOutputLogcat(log_level, time_token, pid, tag_token, msg_token);
         }
     }
 }

@@ -26,13 +26,26 @@ namespace LogcatToolWin
 
         public uint LogLimitCount = 20000;
 
+        public static string StoreCategoryName = "LogcatOutputToolSettings";
+        public static string StorePropertyAdbPathName = "AdbPath";
+        public static string StorePropertyLogsLimitName = "LogsLimit";
+
         public static RoutedCommand DeleteFilter = new RoutedCommand();
         public static RoutedCommand EditFilter = new RoutedCommand();
-        class LogcatItem
+        public class LogcatItem
         {
-            public string LevelToken { get; set; }
+            public enum Level
+            {
+                Verbose,
+                Debug,
+                Info,
+                Warning,
+                Error,
+                Fatal
+            };
+            public Level LevelToken { get; set; }
             public string TimeToken { get; set; }
-            public string PidToken { get; set; }
+            public int PidToken { get; set; }
             public string TagToken { get; set; }
             public string TextToken { get; set; }
         }
@@ -75,8 +88,8 @@ namespace LogcatToolWin
         {
             SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
             WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-            string adb_path = configurationSettingsStore.GetString("LogcatSettings", "AdbPath", "");
-            uint log_limit = configurationSettingsStore.GetUInt32("LogcatSettings", "LogsLimit", 20000);
+            string adb_path = configurationSettingsStore.GetString(StoreCategoryName, StorePropertyAdbPathName, "");
+            uint log_limit = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyLogsLimitName, 20000);
             LogLimitCount = log_limit;
             adb.AdbExePath = adb_path;
         }
@@ -94,7 +107,7 @@ namespace LogcatToolWin
             }
             //if ((!Dispatcher.HasShutdownStarted) && (!Dispatcher.HasShutdownFinished))
             {
-                Dispatcher.Invoke(() => { DeviceStateLabel.Content = msg; });
+                Dispatcher.InvokeAsync(() => { DeviceStateLabel.Content = msg; });
             }
             if (is_ready)
             {
@@ -104,7 +117,7 @@ namespace LogcatToolWin
 
         }
 
-        void OnLogcatOutput(string level_token, string time_token, string pid_token,
+        void OnLogcatOutput(LogcatItem.Level level_token, string time_token, int pid_token,
             string tag_token, string msg_token)
         {
             Dispatcher.InvokeAsync(() =>
@@ -165,7 +178,7 @@ namespace LogcatToolWin
                 {
                     LogcatItem log = item as LogcatItem;
                     if (log == null) return false;
-                    if (log.LevelToken == "D") return true;
+                    if (log.LevelToken == LogcatItem.Level.Debug) return true;
                     return false;
                 };
             }
@@ -188,7 +201,9 @@ namespace LogcatToolWin
 
         private void AddFilter_OnClick(object sender, RoutedEventArgs e)
         {
-            string xaml_item = XamlWriter.Save(FilterTemplateItem);
+            EditFilterDialog dlg = new EditFilterDialog(this);
+            dlg.ShowModal();
+            /*string xaml_item = XamlWriter.Save(FilterTemplateItem);
             StringReader stringReader = new StringReader(xaml_item);
             XmlReader xmlReader = XmlReader.Create(stringReader);
             CheckBox newItem = (CheckBox)XamlReader.Load(xmlReader);
@@ -199,7 +214,30 @@ namespace LogcatToolWin
             it.Command = DeleteFilter;
             it = newItem.ContextMenu.Items[1] as MenuItem;
             it.Command = EditFilter;
-            FilterListBox.Items.Add(newItem);
+            FilterListBox.Items.Add(newItem);*/
+        }
+
+        public void AddNewFilter(string name, string tag, int pid, string text,
+            LogcatItem.Level level)
+        {
+            string xaml_item = XamlWriter.Save(FilterTemplateItem);
+            StringReader stringReader = new StringReader(xaml_item);
+            XmlReader xmlReader = XmlReader.Create(stringReader);
+            CheckBox newCheckbox = (CheckBox)XamlReader.Load(xmlReader);
+            newCheckbox.Name = name;
+            newCheckbox.Content = name;
+            newCheckbox.Visibility = Visibility.Visible;
+            (newCheckbox.ContextMenu.Items[0] as MenuItem).Command = DeleteFilter;
+            (newCheckbox.ContextMenu.Items[1] as MenuItem).Command = EditFilter;
+            newCheckbox.DataContext = new LogFilterData()
+            {
+                FilterName = name,
+                TokenByLevel = level,
+                TokenByPid = pid,
+                TokenByTag = tag,
+                TokenByText = text
+            };
+            FilterListBox.Items.Add(newCheckbox);
         }
 
         void ExecuteDeleteFilterCommand(object sender, ExecutedRoutedEventArgs ev)

@@ -45,17 +45,20 @@ namespace LogcatToolWin
         {
             SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
             WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-            configurationSettingsStore.CreateCollection("LogcatSettings");
+            configurationSettingsStore.CreateCollection(LogcatOutputToolWindowControl.StoreCategoryName);
             if (AdbPathText.Text.Length == 0)
             {
-                configurationSettingsStore.DeleteProperty("LogcatSettings", "AdbPath");
+                configurationSettingsStore.DeleteProperty(LogcatOutputToolWindowControl.StoreCategoryName,
+                    LogcatOutputToolWindowControl.StorePropertyAdbPathName);
             }
             else
             {
-                configurationSettingsStore.SetString("LogcatSettings", "AdbPath", AdbPathText.Text);
+                configurationSettingsStore.SetString(LogcatOutputToolWindowControl.StoreCategoryName,
+                    LogcatOutputToolWindowControl.StorePropertyAdbPathName, AdbPathText.Text);
             }
             uint log_limit = System.Convert.ToUInt32(LogLimitText.Text);
-            configurationSettingsStore.SetUInt32("LogcatSettings", "LogsLimit", log_limit);
+            configurationSettingsStore.SetUInt32(LogcatOutputToolWindowControl.StoreCategoryName,
+                LogcatOutputToolWindowControl.StorePropertyLogsLimitName, log_limit);
             ToolCtrl.LogLimitCount = log_limit;
             ToolCtrl.adb.AdbExePath = AdbPathText.Text;
             ToClose?.Invoke();

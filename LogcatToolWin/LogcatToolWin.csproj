@@ -52,12 +52,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AdbAgent.cs" />
+    <Compile Include="EditFilterDialog.cs" />
+    <Compile Include="EditFilterDialogControl.xaml.cs">
+      <DependentUpon>EditFilterDialogControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LogcatOutputToolWindow.cs" />
     <Compile Include="LogcatOutputToolWindowCommand.cs" />
     <Compile Include="LogcatOutputToolWindowControl.xaml.cs">
       <DependentUpon>LogcatOutputToolWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="LogcatOutputToolWindowPackage.cs" />
+    <Compile Include="LogFilterData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -94,6 +99,10 @@
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="EditFilterDialogControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LogcatOutputToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
