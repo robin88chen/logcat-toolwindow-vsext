@@ -93,9 +93,12 @@
     </VSCTCompile>
     <Resource Include="Resources\Block.png" />
     <Resource Include="Resources\ClearAll.png" />
+    <Resource Include="Resources\cancel.png" />
     <Content Include="Resources\LogcatOutputToolWindowCommand.png" />
     <Content Include="Resources\LogcatOutputToolWindowPackage.ico" />
     <Resource Include="Resources\MobileDeviceIcon.png" />
+    <Resource Include="Resources\settings.png" />
+    <Resource Include="Resources\smartphone.png" />
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>
