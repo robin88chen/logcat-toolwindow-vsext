@@ -16,6 +16,8 @@ namespace LogcatToolWin
     using System.Windows.Markup;
     using System.Xml;
     using System.Windows.Input;
+    using System.Collections.Generic;
+    using System.Diagnostics;
 
     /// <summary>
     /// Interaction logic for LogcatOutputToolWindowControl.
@@ -29,6 +31,11 @@ namespace LogcatToolWin
         public static string StoreCategoryName = "LogcatOutputToolSettings";
         public static string StorePropertyAdbPathName = "AdbPath";
         public static string StorePropertyLogsLimitName = "LogsLimit";
+        public static string StoreFilterCollectionName = "LogcatOutputToolSettings\\Filter";
+        public static string StorePropertyFilterTagName = "Tag";
+        public static string StorePropertyFilterLevelName = "Level";
+        public static string StorePropertyFilterPidName = "Pid";
+        public static string StorePropertyFilterMsgName = "Msg";
 
         public static RoutedCommand DeleteFilter = new RoutedCommand();
         public static RoutedCommand EditFilter = new RoutedCommand();
@@ -70,6 +77,7 @@ namespace LogcatToolWin
         void OnLoadedHandler(object sender, RoutedEventArgs ev)
         {
             LoadSettings();
+            LoadFilterStoreData();
             AdbAgent.ToOpenSettingDlg += OpenSettingDialog;
             AdbAgent.OnDeviceChecked += OnDeviceChecked;
             AdbAgent.OnOutputLogcat += OnLogcatOutput;
@@ -131,6 +139,7 @@ namespace LogcatToolWin
                     LevelToken = level_token, TimeToken = time_token,
                     PidToken = pid_token, TagToken = tag_token, TextToken = msg_token
                 });
+                LogcatList.Items.Refresh();
             });
             //if ((!Dispatcher.HasShutdownStarted) && (!Dispatcher.HasShutdownFinished))
             {
@@ -217,8 +226,8 @@ namespace LogcatToolWin
             FilterListBox.Items.Add(newItem);*/
         }
 
-        public void AddNewFilter(string name, string tag, int pid, string text,
-            LogcatItem.Level level)
+        public void AddFilterItem(string name, string tag, int pid, string text,
+            LogcatItem.Level level, bool isNew)
         {
             string xaml_item = XamlWriter.Save(FilterTemplateItem);
             StringReader stringReader = new StringReader(xaml_item);
@@ -229,6 +238,7 @@ namespace LogcatToolWin
             newCheckbox.Visibility = Visibility.Visible;
             (newCheckbox.ContextMenu.Items[0] as MenuItem).Command = DeleteFilter;
             (newCheckbox.ContextMenu.Items[1] as MenuItem).Command = EditFilter;
+            newCheckbox.Click += new RoutedEventHandler(FilterTemplate_Clicked);
             newCheckbox.DataContext = new LogFilterData()
             {
                 FilterName = name,
@@ -238,18 +248,102 @@ namespace LogcatToolWin
                 TokenByText = text
             };
             FilterListBox.Items.Add(newCheckbox);
+
+            if (isNew)
+            {
+                CreateFilterStoreData(name, tag, pid, text, level);
+            }
+        }
+        public void ChangeFilterItem(CheckBox chk_box, string tag, int pid, string text,
+            LogcatItem.Level level)
+        {
+            LogFilterData filter_data = chk_box.DataContext as LogFilterData;
+            filter_data.TokenByTag = tag;
+            filter_data.TokenByPid = pid;
+            filter_data.TokenByText = text;
+            filter_data.TokenByLevel = level;
+
+            CreateFilterStoreData(chk_box.Name, tag, pid, text, level);
         }
 
+        public void CreateFilterStoreData(string name, string tag, int pid, string text,
+            LogcatItem.Level level)
+        {
+            SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
+            WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            configurationSettingsStore.CreateCollection(LogcatOutputToolWindowControl.StoreFilterCollectionName);
+            string filter_sub_collection = LogcatOutputToolWindowControl.StoreFilterCollectionName
+                + "\\" + name;
+            configurationSettingsStore.CreateCollection(filter_sub_collection);
+            configurationSettingsStore.SetString(filter_sub_collection,
+                LogcatOutputToolWindowControl.StorePropertyFilterTagName, tag);
+            configurationSettingsStore.SetInt32(filter_sub_collection,
+                LogcatOutputToolWindowControl.StorePropertyFilterPidName, pid);
+            configurationSettingsStore.SetString(filter_sub_collection,
+                LogcatOutputToolWindowControl.StorePropertyFilterMsgName, text);
+            configurationSettingsStore.SetInt32(filter_sub_collection,
+                LogcatOutputToolWindowControl.StorePropertyFilterLevelName, (int)level);
+        }
+
+        public void LoadFilterStoreData()
+        {
+            SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
+            WritableSettingsStore settingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            if (settingsStore.CollectionExists(StoreFilterCollectionName))
+            {
+                int count = settingsStore.GetSubCollectionCount(StoreFilterCollectionName);
+                IEnumerable<string> filter_name_list = settingsStore.GetSubCollectionNames(LogcatOutputToolWindowControl.StoreFilterCollectionName);
+                if (filter_name_list == null) return;
+                foreach (string name in filter_name_list)
+                {
+                    string filter_sub_collection = StoreFilterCollectionName
+                        + "\\" + name;
+                    string tag = settingsStore.GetString(filter_sub_collection,
+                        LogcatOutputToolWindowControl.StorePropertyFilterTagName, "");
+                    int pid = settingsStore.GetInt32(filter_sub_collection,
+                        LogcatOutputToolWindowControl.StorePropertyFilterPidName, 0);
+                    string msg = settingsStore.GetString(filter_sub_collection,
+                        LogcatOutputToolWindowControl.StorePropertyFilterMsgName, "");
+                    int level = settingsStore.GetInt32(filter_sub_collection,
+                        LogcatOutputToolWindowControl.StorePropertyFilterLevelName, 0);
+                    AddFilterItem(name, tag, pid, msg, 
+                        (LogcatOutputToolWindowControl.LogcatItem.Level)level, false);
+                }
+            }
+        }
+        public void DeleteFilterStoreData(string name)
+        {
+            SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
+            WritableSettingsStore settingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            if (settingsStore.CollectionExists(StoreFilterCollectionName))
+            {
+                string filter_sub_collection = StoreFilterCollectionName
+                    + "\\" + name;
+                settingsStore.DeleteCollection(filter_sub_collection);
+            }
+        }
         void ExecuteDeleteFilterCommand(object sender, ExecutedRoutedEventArgs ev)
         {
             ListBoxItem it = ev.OriginalSource as ListBoxItem;
+            CheckBox chk_box = it.Content as CheckBox;
+            if (chk_box != null)
+            {
+                DeleteFilterStoreData(chk_box.Name);
+            }
             int index = FilterListBox.Items.IndexOf(it.Content);
             FilterListBox.Items.Remove(it.Content);
             MessageBox.Show("Delete Filter");
         }
         void ExecuteEditFilterCommand(object sender, ExecutedRoutedEventArgs ev)
         {
-            MessageBox.Show("Edit Filter");
+            ListBoxItem it = ev.OriginalSource as ListBoxItem;
+            CheckBox chk_box = it.Content as CheckBox;
+            if (chk_box == null) return;
+            LogFilterData filter_data = chk_box.DataContext as LogFilterData;
+            if (filter_data == null) return;
+            EditFilterDialog dlg = new EditFilterDialog(this);
+            dlg.InitData(chk_box);
+            dlg.ShowModal();
         }
         private void CanExecuteCustomCommand(object sender,
                     CanExecuteRoutedEventArgs e)
@@ -263,6 +357,20 @@ namespace LogcatToolWin
             else
             {
                 e.CanExecute = false;
+            }
+        }
+
+        private void FilterTemplate_Clicked(object sender, RoutedEventArgs e)
+        {
+            CheckBox chk_box = sender as CheckBox;
+            LogFilterData filter_data = chk_box.DataContext as LogFilterData;
+            if (chk_box.IsChecked == true)
+            {
+                LogcatList.Items.Filter += filter_data.IsFilterSelected;
+            }
+            else
+            {
+                LogcatList.Items.Filter -= filter_data.IsFilterSelected;
             }
         }
     }

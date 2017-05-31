@@ -22,6 +22,8 @@ namespace LogcatToolWin
     {
         LogcatOutputToolWindowControl ToolCtrl;
         public static Action ToClose;
+        bool IsNew = true;
+        CheckBox checkBox;
         public EditFilterDialogControl(LogcatOutputToolWindowControl tool_ctrl)
         {
             InitializeComponent();
@@ -38,10 +40,34 @@ namespace LogcatToolWin
             }
             LogcatOutputToolWindowControl.LogcatItem.Level level = LogcatOutputToolWindowControl.LogcatItem.Level.Verbose;
             int sel_index = FilterByLevelCombo.SelectedIndex;
-            ToolCtrl.AddNewFilter(FilterNameText.Text, FilterByTagText.Text, pid,
-                FilterByMsgText.Text,
-                (LogcatOutputToolWindowControl.LogcatItem.Level)FilterByLevelCombo.SelectedIndex);
+            if (IsNew)
+            {
+                ToolCtrl.AddFilterItem(FilterNameText.Text, FilterByTagText.Text, pid,
+                   FilterByMsgText.Text,
+                    (LogcatOutputToolWindowControl.LogcatItem.Level)FilterByLevelCombo.SelectedIndex,
+                    IsNew);
+            }
+            else
+            {
+                ToolCtrl.ChangeFilterItem(checkBox, FilterByTagText.Text, pid,
+                   FilterByMsgText.Text,
+                    (LogcatOutputToolWindowControl.LogcatItem.Level)FilterByLevelCombo.SelectedIndex);
+            }
             ToClose?.Invoke();
+        }
+
+        public void InitData(CheckBox chk_box)
+        {
+            LogFilterData filter_data = chk_box.DataContext as LogFilterData;
+            if (filter_data == null) return;
+            checkBox = chk_box;
+            FilterNameText.Text = chk_box.Name;
+            FilterNameText.IsReadOnly = true;
+            FilterByTagText.Text = filter_data.TokenByTag;
+            FilterByPidText.Text = filter_data.TokenByPid.ToString();
+            FilterByMsgText.Text = filter_data.TokenByText;
+            FilterByLevelCombo.SelectedIndex = (int)filter_data.TokenByLevel;
+            IsNew = false;
         }
     }
 }

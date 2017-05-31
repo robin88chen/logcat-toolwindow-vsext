@@ -34,7 +34,7 @@
             </ToolBar>
             <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4" HorizontalContentAlignment="Stretch">
                 <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick"/>
-                <CheckBox x:Name="FilterTemplateItem" HorizontalContentAlignment="Center" Content="FilterTemp" Visibility="Collapsed">
+                <CheckBox x:Name="FilterTemplateItem" HorizontalContentAlignment="Center" Content="FilterTemp" Click="FilterTemplate_Clicked">
                     <CheckBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete"/>

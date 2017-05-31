@@ -250,6 +250,7 @@ namespace LogcatToolWin
             int tag_split = msg.IndexOf('(');
             if (tag_split == -1) return;
             string tag_token = msg.Substring(0, tag_split);
+            tag_token = tag_token.Trim();
             msg = msg.Substring(tag_split + 1);
             int pid_split = msg.IndexOf(')');
             if (pid_split == -1) return;
