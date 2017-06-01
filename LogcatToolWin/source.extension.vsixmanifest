@@ -2,8 +2,11 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="LogcatToolWin.Lancelot Chen.3ed07f6e-8aa0-483e-94f2-606d96c57ffd" Version="1.0" Language="en-US" Publisher="Lancelot Chen" />
-    <DisplayName>LogcatToolWin</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <DisplayName>Android Logcat Output</DisplayName>
+    <Description xml:space="preserve">Android logcat output window, inspired by NVidia Nsight Tegra extensions. The output window catches logcat output with customizable filters.</Description>
+    <Icon>Resources\pkgicon.png</Icon>
+    <PreviewImage>preview_image.png</PreviewImage>
+    <Tags>Android Logcat</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />

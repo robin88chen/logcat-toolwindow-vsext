@@ -94,11 +94,23 @@
     <Resource Include="Resources\Block.png" />
     <Resource Include="Resources\ClearAll.png" />
     <Resource Include="Resources\cancel.png" />
+    <Content Include="preview_image.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\LogcatOutputToolWindowCommand.png" />
     <Content Include="Resources\LogcatOutputToolWindowPackage.ico" />
     <Resource Include="Resources\MobileDeviceIcon.png" />
     <Resource Include="Resources\settings.png" />
-    <Resource Include="Resources\smartphone.png" />
+    <Content Include="Resources\smartphone.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Resource Include="Resources\menuicon.png" />
+    <Content Include="Resources\pkgicon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>
