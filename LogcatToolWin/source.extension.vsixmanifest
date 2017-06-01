@@ -4,6 +4,7 @@
     <Identity Id="LogcatToolWin.Lancelot Chen.3ed07f6e-8aa0-483e-94f2-606d96c57ffd" Version="1.0" Language="en-US" Publisher="Lancelot Chen" />
     <DisplayName>Android Logcat Output</DisplayName>
     <Description xml:space="preserve">Android logcat output window, inspired by NVidia Nsight Tegra extensions. The output window catches logcat output with customizable filters.</Description>
+    <MoreInfo>https://github.com/lancelot-coder-chen/logcat-toolwindow-vsext</MoreInfo>
     <Icon>Resources\pkgicon.png</Icon>
     <PreviewImage>preview_image.png</PreviewImage>
     <Tags>Android Logcat</Tags>
