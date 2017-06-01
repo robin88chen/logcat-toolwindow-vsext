@@ -39,6 +39,8 @@ namespace LogcatToolWin
 
         public static RoutedCommand DeleteFilter = new RoutedCommand();
         public static RoutedCommand EditFilter = new RoutedCommand();
+
+        bool HasLoaded = false;
         public class LogcatItem
         {
             public enum Level
@@ -76,12 +78,14 @@ namespace LogcatToolWin
 
         void OnLoadedHandler(object sender, RoutedEventArgs ev)
         {
+            if (HasLoaded) return;
             LoadSettings();
             LoadFilterStoreData();
             AdbAgent.ToOpenSettingDlg += OpenSettingDialog;
             AdbAgent.OnDeviceChecked += OnDeviceChecked;
             AdbAgent.OnOutputLogcat += OnLogcatOutput;
             adb.CheckAdbDevice();
+            HasLoaded = true;
         }
 
         void OnUnloadedHandler(object sender, RoutedEventArgs ev)
@@ -90,6 +94,8 @@ namespace LogcatToolWin
             AdbAgent.OnOutputLogcat -= OnLogcatOutput;
             AdbAgent.OnDeviceChecked -= OnDeviceChecked;
             adb.StopAdbLogcat();
+            ClearFilterItems();
+            HasLoaded = false;
         }
 
         void LoadSettings()
@@ -321,6 +327,14 @@ namespace LogcatToolWin
                     + "\\" + name;
                 settingsStore.DeleteCollection(filter_sub_collection);
             }
+        }
+        void ClearFilterItems()
+        {
+            while (FilterListBox.Items.Count > 2)
+            {
+                FilterListBox.Items.RemoveAt(2);
+            }
+            LogcatList.Items.Filter = null;
         }
         void ExecuteDeleteFilterCommand(object sender, ExecutedRoutedEventArgs ev)
         {

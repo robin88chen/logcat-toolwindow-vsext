@@ -102,10 +102,7 @@
     <Content Include="Resources\LogcatOutputToolWindowPackage.ico" />
     <Resource Include="Resources\MobileDeviceIcon.png" />
     <Resource Include="Resources\settings.png" />
-    <Content Include="Resources\smartphone.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Resource Include="Resources\smartphone.png" />
     <Resource Include="Resources\menuicon.png" />
     <Content Include="Resources\pkgicon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

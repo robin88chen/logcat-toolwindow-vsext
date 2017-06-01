@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,12 @@ namespace LogcatToolWin
         private void OK_OnClick(object sender, RoutedEventArgs e)
         {
             if ((FilterNameText.Text == null) || (FilterNameText.Text.Length <= 0)) return;
+            Regex reg = new Regex("^[A-Za-z][A-Za-z0-9]*$");
+            if (!reg.IsMatch(FilterNameText.Text))
+            {
+                MessageBox.Show("Invalid Filter Name");
+                return;
+            }
             int pid = 0;
             if ((FilterByPidText.Text != null) && (FilterByPidText.Text.Length > 0))
             {
@@ -69,5 +76,6 @@ namespace LogcatToolWin
             FilterByLevelCombo.SelectedIndex = (int)filter_data.TokenByLevel;
             IsNew = false;
         }
+
     }
 }
