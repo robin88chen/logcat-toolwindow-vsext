@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="LogcatToolWin.Lancelot Chen.3ed07f6e-8aa0-483e-94f2-606d96c57ffd" Version="1.0" Language="en-US" Publisher="Lancelot Chen" />
+    <Identity Id="LogcatToolWin.Lancelot Chen.3ed07f6e-8aa0-483e-94f2-606d96c57ffd" Version="1.0.2" Language="en-US" Publisher="Lancelot Chen" />
     <DisplayName>Android Logcat Output</DisplayName>
     <Description xml:space="preserve">Android logcat output window, inspired by NVidia Nsight Tegra extensions. The output window catches logcat output with customizable filters.</Description>
     <MoreInfo>https://github.com/lancelot-coder-chen/logcat-toolwindow-vsext</MoreInfo>
@@ -11,6 +11,8 @@
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />
+    <InstallationTarget Version="[15.0,16.0)" Id="Microsoft.VisualStudio.Enterprise" />
+    <InstallationTarget Version="[15.0,16.0)" Id="Microsoft.VisualStudio.Pro" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />

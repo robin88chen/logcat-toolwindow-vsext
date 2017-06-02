@@ -18,6 +18,7 @@ namespace LogcatToolWin
     using System.Windows.Input;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System;
 
     /// <summary>
     /// Interaction logic for LogcatOutputToolWindowControl.
@@ -63,9 +64,10 @@ namespace LogcatToolWin
         /// </summary>
         public LogcatOutputToolWindowControl()
         {
+            this.Initialized += OnInitializedHandler;
             this.InitializeComponent();
-            this.Loaded += new RoutedEventHandler(OnLoadedHandler);
-            this.Unloaded += new RoutedEventHandler(OnUnloadedHandler);
+            //this.Loaded += new RoutedEventHandler(OnLoadedHandler);
+            //this.Unloaded += new RoutedEventHandler(OnUnloadedHandler);
 
             // attach CommandBinding to root window
             this.CommandBindings.Add(new CommandBinding(
@@ -75,8 +77,11 @@ namespace LogcatToolWin
             //MenuItem it = FilterTemplateItem.ContextMenu.Items[0] as MenuItem;
             //it.Command = DeleteFilter;
         }
-
-        void OnLoadedHandler(object sender, RoutedEventArgs ev)
+        ~LogcatOutputToolWindowControl()
+        {
+            adb.StopAdbLogcat();
+        }
+        void OnInitializedHandler(object sender, EventArgs ev)
         {
             if (HasLoaded) return;
             LoadSettings();
@@ -88,13 +93,28 @@ namespace LogcatToolWin
             HasLoaded = true;
         }
 
+        void OnLoadedHandler(object sender, RoutedEventArgs ev)
+        {
+            if (HasLoaded) return;
+            LoadSettings();
+            LoadFilterStoreData();
+            AdbAgent.ToOpenSettingDlg += OpenSettingDialog;
+            AdbAgent.OnDeviceChecked += OnDeviceChecked;
+            AdbAgent.OnOutputLogcat += OnLogcatOutput;
+            Dispatcher.InvokeAsync(() => adb.CheckAdbDevice());
+            HasLoaded = true;
+        }
+
         void OnUnloadedHandler(object sender, RoutedEventArgs ev)
         {
             AdbAgent.ToOpenSettingDlg -= OpenSettingDialog;
             AdbAgent.OnOutputLogcat -= OnLogcatOutput;
             AdbAgent.OnDeviceChecked -= OnDeviceChecked;
-            adb.StopAdbLogcat();
-            ClearFilterItems();
+            /*Dispatcher.InvokeAsync(() =>
+            {
+                adb.StopAdbLogcat();
+                ClearFilterItems();
+            });*/
             HasLoaded = false;
         }
 
@@ -125,7 +145,7 @@ namespace LogcatToolWin
             }
             if (is_ready)
             {
-                adb.StartAdbLogcat();
+                Dispatcher.InvokeAsync(() => adb.StartAdbLogcat());
             }
             //Instance.DeviceStateLabel.Content = "Device"; // device_name as object;
 
@@ -169,7 +189,14 @@ namespace LogcatToolWin
 
         private void ConnectDevice_OnClick(object sender, RoutedEventArgs e)
         {
-            adb.CheckAdbDevice();
+            if (!adb.IsDeviceReady)
+            {
+                adb.CheckAdbDevice();
+            }
+            else
+            {
+                adb.StartAdbLogcat();
+            }
         }
 
         private void CancelLogcat_OnClick(object sender, RoutedEventArgs e)

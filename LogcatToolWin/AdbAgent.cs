@@ -30,7 +30,7 @@ namespace LogcatToolWin
         public string AdbExePath;
         public static Action ToOpenSettingDlg;
 
-        Process outputProcess;
+        Process outputProcess = null;
         public AdbAgent()
         {
         }
@@ -153,6 +153,7 @@ namespace LogcatToolWin
         }
         public void ProceedAdbCommandToOutput(string cmd, DataReceivedEventHandler handler)
         {
+            if (outputProcess != null) return;
             outputProcess = new Process();
             string full_cmd = AdbExePath + " "; // "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
             outputProcess.StartInfo.FileName = full_cmd;
@@ -178,6 +179,7 @@ namespace LogcatToolWin
                 {
                     ToOpenSettingDlg();
                 }
+                outputProcess = null;
             }
             //process.WaitForExit();
             //* Read the output (or the error)
