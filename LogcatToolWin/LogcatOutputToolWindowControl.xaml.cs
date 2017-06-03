@@ -160,12 +160,23 @@ namespace LogcatToolWin
                 {
                     LogcatList.Items.RemoveAt(0);
                 }
-                LogcatList.Items.Add(new LogcatItem()
+                LogcatItem log_item = new LogcatItem()
                 {
-                    LevelToken = level_token, TimeToken = time_token,
-                    PidToken = pid_token, TagToken = tag_token, TextToken = msg_token
-                });
-                LogcatList.Items.Refresh();
+                    LevelToken = level_token,
+                    TimeToken = time_token,
+                    PidToken = pid_token,
+                    TagToken = tag_token,
+                    TextToken = msg_token
+                };
+                LogcatList.Items.Add(log_item);
+                if (LogcatList.Items.Filter != null)
+                {
+                    if (!LogcatList.Items.Filter(log_item))
+                    {
+                        LogcatList.Items.Refresh();
+                    }
+                }
+                //LogcatList.Items.Refresh();
             });
             //if ((!Dispatcher.HasShutdownStarted) && (!Dispatcher.HasShutdownFinished))
             {
