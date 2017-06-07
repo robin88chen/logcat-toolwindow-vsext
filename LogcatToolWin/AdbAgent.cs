@@ -205,7 +205,14 @@ namespace LogcatToolWin
                 outputProcess.CancelOutputRead();
                 //outputProcess.CloseMainWindow();
                 //outputProcess.Close();
-                outputProcess.Kill();
+                try
+                {
+                    outputProcess.Kill();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("process kill exception " + e.Message);
+                }
                 outputProcess = null;
             }
         }
@@ -257,7 +264,15 @@ namespace LogcatToolWin
             int pid_split = msg.IndexOf(')');
             if (pid_split == -1) return;
             string pid_token = msg.Substring(0, pid_split);
-            int pid = System.Convert.ToInt32(pid_token);
+            int pid = 0;
+            try
+            {
+                pid = System.Convert.ToInt32(pid_token);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("pid exception " + e.Message);
+            }
             string msg_token = msg.Substring(pid_split + 2);
             OnOutputLogcat(log_level, time_token, pid, tag_token, msg_token);
         }
