@@ -59,6 +59,7 @@ namespace LogcatToolWin
             public string TagToken { get; set; }
             public string TextToken { get; set; }
         }
+        List<LogcatItem> DeferredLogs = new List<LogcatItem>();
         /// <summary>
         /// Initializes a new instance of the <see cref="LogcatOutputToolWindowControl"/> class.
         /// </summary>
@@ -154,9 +155,44 @@ namespace LogcatToolWin
         void OnLogcatOutput(LogcatItem.Level level_token, string time_token, int pid_token,
             string tag_token, string msg_token)
         {
+            lock (DeferredLogs)
+            {
+                DeferredLogs.Add(new LogcatItem()
+                {
+                    LevelToken = level_token,
+                    TimeToken = time_token,
+                    PidToken = pid_token,
+                    TagToken = tag_token,
+                    TextToken = msg_token
+                });
+            }
+            if (DeferredLogs.Count < 20) return;
+            List<LogcatItem> collectLogs;
+            lock (DeferredLogs)
+            {
+                collectLogs = new List<LogcatItem>(DeferredLogs);
+                DeferredLogs.Clear();
+            }
             Dispatcher.InvokeAsync(() =>
             {
-                if (LogcatList.Items.Count > LogLimitCount)
+                bool needRefresh = false;
+                foreach (LogcatItem log_item in collectLogs)
+                {
+                    if (LogcatList.Items.Count > LogLimitCount)
+                    {
+                        LogcatList.Items.RemoveAt(0);
+                    }
+                    LogcatList.Items.Add(log_item);
+                    if (LogcatList.Items.Filter != null)
+                    {
+                        if (!LogcatList.Items.Filter(log_item))
+                        {
+                            needRefresh = true;
+                        }
+                    }
+                }
+                if (needRefresh) LogcatList.Items.Refresh();
+                /*if (LogcatList.Items.Count > LogLimitCount)
                 {
                     LogcatList.Items.RemoveAt(0);
                 }
@@ -175,13 +211,9 @@ namespace LogcatToolWin
                     {
                         LogcatList.Items.Refresh();
                     }
-                }
+                }*/
                 //LogcatList.Items.Refresh();
             });
-            //if ((!Dispatcher.HasShutdownStarted) && (!Dispatcher.HasShutdownFinished))
-            {
-                //Dispatcher.InvokeAsync(() => { OutputLogTextBlock.Text = msg + "\n"; });
-            }
         }
 
         /// <summary>
