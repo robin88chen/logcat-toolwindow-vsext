@@ -162,6 +162,7 @@ namespace LogcatToolWin
             outputProcess.StartInfo.RedirectStandardOutput = true;
             outputProcess.StartInfo.RedirectStandardError = true;
             outputProcess.StartInfo.CreateNoWindow = true;
+            outputProcess.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             outputProcess.OutputDataReceived += handler;
             outputProcess.ErrorDataReceived += handler;
             //* Start process and handlers
@@ -237,9 +238,10 @@ namespace LogcatToolWin
         static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             if (OnOutputLogcat == null) return;
+            if (outLine.Data == null) return;
 
             string msg = outLine.Data;
-            if ((msg == null) || (msg.Length == 0)) return;
+            if ((msg == null) || (msg.Length <= 7)) return;
             int time_split = msg.IndexOf(' ', 7);
             if (time_split == -1) return;
             string time_token = msg.Substring(0, time_split);
