@@ -108,6 +108,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\scroll_down.png" />
     <Content Include="stylesheet.css" />
   </ItemGroup>
   <ItemGroup>

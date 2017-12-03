@@ -35,6 +35,12 @@
                     </Button.Background>
                 </Button>
                 <Label Content="Settings" Height="31" VerticalAlignment="Top"/>
+                <Button x:Name="AutoScrollButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="30" Click="AutoScroll_OnClick">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Resources/scroll_down.png"/>
+                    </Button.Background>
+                </Button>
+                <Label x:Name="AutoScrollLabel" Content="Auto Scroll " Height="31" VerticalAlignment="Top"/>
             </ToolBar>
             <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4" HorizontalContentAlignment="Stretch">
                 <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick"/>

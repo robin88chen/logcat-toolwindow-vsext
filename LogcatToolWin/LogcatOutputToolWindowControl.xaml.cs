@@ -32,6 +32,7 @@ namespace LogcatToolWin
         public static string StoreCategoryName = "LogcatOutputToolSettings";
         public static string StorePropertyAdbPathName = "AdbPath";
         public static string StorePropertyLogsLimitName = "LogsLimit";
+        public static string StorePropertyAutoScrollName = "AutoScroll";
         public static string StoreFilterCollectionName = "LogcatOutputToolSettings\\Filter";
         public static string StorePropertyFilterTagName = "Tag";
         public static string StorePropertyFilterLevelName = "Level";
@@ -42,6 +43,7 @@ namespace LogcatToolWin
         public static RoutedCommand EditFilter = new RoutedCommand();
 
         bool HasLoaded = false;
+        bool IsAutoScroll = false;
         public class LogcatItem
         {
             public enum Level
@@ -125,8 +127,18 @@ namespace LogcatToolWin
             WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
             string adb_path = configurationSettingsStore.GetString(StoreCategoryName, StorePropertyAdbPathName, "");
             uint log_limit = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyLogsLimitName, 20000);
+            bool is_auto = configurationSettingsStore.GetBoolean(StoreCategoryName, StorePropertyAutoScrollName, false);
             LogLimitCount = log_limit;
             adb.AdbExePath = adb_path;
+            IsAutoScroll = is_auto;
+            if (IsAutoScroll)
+            {
+                Dispatcher.InvokeAsync(() => { AutoScrollLabel.Content = "Auto Scroll On"; });
+            }
+            else
+            {
+                Dispatcher.InvokeAsync(() => { AutoScrollLabel.Content = "Auto Scroll Off"; });
+            }
         }
 
         void OnDeviceChecked(string device_name, bool is_ready)
@@ -192,6 +204,10 @@ namespace LogcatToolWin
                     }
                 }
                 if (needRefresh) LogcatList.Items.Refresh();
+                if ((IsAutoScroll) && (LogcatList.Items.Count > 0))
+                {
+                    LogcatList.ScrollIntoView(LogcatList.Items[LogcatList.Items.Count - 1]);
+                }
                 /*if (LogcatList.Items.Count > LogLimitCount)
                 {
                     LogcatList.Items.RemoveAt(0);
@@ -456,6 +472,23 @@ namespace LogcatToolWin
             {
                 LogcatList.Items.Filter -= filter_data.IsFilterSelected;
             }
+        }
+
+        private void AutoScroll_OnClick(object sender, RoutedEventArgs e)
+        {
+            IsAutoScroll = !IsAutoScroll;
+            if (IsAutoScroll)
+            {
+                Dispatcher.InvokeAsync(() => { AutoScrollLabel.Content = "Auto Scroll On"; });
+            }
+            else
+            {
+                Dispatcher.InvokeAsync(() => { AutoScrollLabel.Content = "Auto Scroll Off"; });
+            }
+            SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
+            WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+            configurationSettingsStore.CreateCollection(LogcatOutputToolWindowControl.StoreCategoryName);
+            configurationSettingsStore.SetBoolean(StoreCategoryName, StorePropertyAutoScrollName, IsAutoScroll);
         }
     }
 }
