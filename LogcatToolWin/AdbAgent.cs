@@ -9,7 +9,7 @@ using Microsoft.Win32.SafeHandles;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Windows.Threading;
-
+  
 namespace LogcatToolWin
 {
     /*[System.Runtime.InteropServices.StructLayout(LayoutKind.Sequential)]
