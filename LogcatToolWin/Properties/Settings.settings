@@ -8,5 +8,7 @@
     <Setting Name="LogsLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20000</Value>
     </Setting>
+	
+	
   </Settings>
 </SettingsFile>
