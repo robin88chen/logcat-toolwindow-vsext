@@ -7,6 +7,8 @@
     <Setting Name="AdbExePath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+	
+	
     <Setting Name="LogsLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">20000</Value>
     </Setting>
