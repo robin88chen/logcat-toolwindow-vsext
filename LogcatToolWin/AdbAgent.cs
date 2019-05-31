@@ -197,7 +197,7 @@ namespace LogcatToolWin
         public void StartAdbLogcat()
         {
             // 開始前先清除前面的, 免得因為前面超多, 會 Hang住
-            ProceedAdbCommandToExit("logcat -c", null);
+            ProceedAdbCommandToExit("logcat -b all -c", null);
             ProceedAdbCommandToOutput("logcat -v time", new DataReceivedEventHandler(OutputHandler));
         }
         public void StopAdbLogcat()

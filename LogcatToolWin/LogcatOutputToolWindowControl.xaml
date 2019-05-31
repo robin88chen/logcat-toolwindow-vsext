@@ -11,44 +11,53 @@
              Name="MyToolWindow">
     <Grid>
         <DockPanel>
-            <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top"
+            <!--<ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">-->
+                <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top"
                      Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" >
-                <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Resources/smartphone.png"/>
-                    </Button.Background>
-                </Button>
-                <Label x:Name="DeviceStateLabel" Content="Device" Height="31" VerticalAlignment="Top" 
+                    <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/smartphone.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label x:Name="DeviceStateLabel" Content="Device" Height="31" VerticalAlignment="Top" 
                        Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"/>
-                <Button x:Name="CancelLogcatButton" Content="" Height="30" VerticalAlignment="Top" Width="30" Click="CancelLogcat_OnClick" ToolTip="Cancel Logcat">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Resources/cancel.png"/>
-                    </Button.Background>
-                </Button>
-                <Label Content="Cancel Logcat" 
+                    <Button x:Name="CancelLogcatButton" Content="" Height="30" VerticalAlignment="Top" Width="30" Click="CancelLogcat_OnClick" ToolTip="Cancel Logcat">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/cancel.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label Content="Cancel Logcat" 
                        Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"/>
-                <Button x:Name="ClearLogsButton" Height="30" VerticalAlignment="Top" Width="30" ToolTip="Clear All Logs" Click="ClearLogs_OnClick">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Resources/ClearAll.png"/>
-                    </Button.Background>
-                </Button>
-                <Label Content="Clear Logs"
+                    <Button x:Name="ClearLogsButton" Height="30" VerticalAlignment="Top" Width="30" ToolTip="Clear All Logs" Click="ClearLogs_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/ClearAll.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label Content="Clear Logs"
                        Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
-                <Button x:Name="SettingButton" Content="" Height="30" VerticalAlignment="Top" Width="30" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Click="Setting_OnClick">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Resources/settings.png"/>
-                    </Button.Background>
-                </Button>
-                <Label Content="Settings" Height="31" VerticalAlignment="Top" 
+                    <Button x:Name="SettingButton" Content="" Height="30" VerticalAlignment="Top" Width="30" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Click="Setting_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/settings.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label Content="Settings" Height="31" VerticalAlignment="Top" 
                        Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
-                <Button x:Name="AutoScrollButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="30" Click="AutoScroll_OnClick">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Resources/scroll_down.png"/>
-                    </Button.Background>
-                </Button>
-                <Label x:Name="AutoScrollLabel" Content="Auto Scroll " Height="31" VerticalAlignment="Top"
+                    <Button x:Name="AutoScrollButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="30" Click="AutoScroll_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/scroll_down.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label x:Name="AutoScrollLabel" Content="Auto Scroll " Height="31" VerticalAlignment="Top"
                        Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
-            </ToolBar>
+                </ToolBar>
+                <!--<ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top" 
+                         Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+                    <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                        <CheckBox Content="Process Only" Click="AddFilter_OnClick" ></CheckBox>
+                    </Grid>
+                        <ComboBox ></ComboBox>
+                </ToolBar>-->
+            <!--</ToolBarTray> -->
             <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4" HorizontalContentAlignment="Stretch"
                      Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
                 <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick" 
@@ -66,6 +75,7 @@
                 </CheckBox>
             </ListBox>
             <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="4" HorizontalContentAlignment="Stretch"
+                      ItemsSource="{Binding}"
                       Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
                 <!--<Style TargetType="ListViewItem">
                     <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" />

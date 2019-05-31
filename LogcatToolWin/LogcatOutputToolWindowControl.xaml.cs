@@ -19,6 +19,9 @@ namespace LogcatToolWin
     using System.Collections.Generic;
     using System.Diagnostics;
     using System;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Windows.Media;
 
     /// <summary>
     /// Interaction logic for LogcatOutputToolWindowControl.
@@ -61,7 +64,8 @@ namespace LogcatToolWin
             public string TagToken { get; set; }
             public string TextToken { get; set; }
         }
-        List<LogcatItem> DeferredLogs = new List<LogcatItem>();
+        //List<LogcatItem> DeferredLogs = new List<LogcatItem>();
+        ObservableCollection<LogcatItem> LogsToView;
         /// <summary>
         /// Initializes a new instance of the <see cref="LogcatOutputToolWindowControl"/> class.
         /// </summary>
@@ -79,6 +83,9 @@ namespace LogcatToolWin
                           EditFilter, ExecuteEditFilterCommand, CanExecuteCustomCommand));
             //MenuItem it = FilterTemplateItem.ContextMenu.Items[0] as MenuItem;
             //it.Command = DeleteFilter;
+            LogsToView = new ObservableCollection<LogcatItem>();
+            LogcatList.DataContext = LogsToView;
+            LogsToView.CollectionChanged += new NotifyCollectionChangedEventHandler(OnCollectionChanged);
         }
         ~LogcatOutputToolWindowControl()
         {
@@ -93,6 +100,9 @@ namespace LogcatToolWin
             AdbAgent.OnDeviceChecked += OnDeviceChecked;
             AdbAgent.OnOutputLogcat += OnLogcatOutput;
             adb.CheckAdbDevice();
+            //LogsToView = new ObservableCollection<LogcatItem>();
+            //LogcatList.DataContext = LogsToView;
+            //((INotifyCollectionChanged)LogcatList.ItemsSource).CollectionChanged += new NotifyCollectionChangedEventHandler(OnCollectionChanged);
             HasLoaded = true;
         }
 
@@ -167,7 +177,23 @@ namespace LogcatToolWin
         void OnLogcatOutput(LogcatItem.Level level_token, string time_token, int pid_token,
             string tag_token, string msg_token)
         {
-            lock (DeferredLogs)
+            LogcatItem logcat_item = new LogcatItem()
+            {
+                LevelToken = level_token,
+                TimeToken = time_token,
+                PidToken = pid_token,
+                TagToken = tag_token,
+                TextToken = msg_token
+            };
+            Dispatcher.InvokeAsync(() =>
+            {
+                LogsToView.Add(logcat_item);
+                if (LogsToView.Count > LogLimitCount)
+                {
+                    LogsToView.RemoveAt(0);
+                }
+            });
+            /*lock (DeferredLogs)
             {
                 DeferredLogs.Add(new LogcatItem()
                 {
@@ -178,7 +204,7 @@ namespace LogcatToolWin
                     TextToken = msg_token
                 });
             }
-            if (DeferredLogs.Count < 20) return;
+            if (DeferredLogs.Count < 1) return;
             List<LogcatItem> collectLogs;
             lock (DeferredLogs)
             {
@@ -187,7 +213,12 @@ namespace LogcatToolWin
             }
             Dispatcher.InvokeAsync(() =>
             {
-                bool needRefresh = false;
+                foreach (var log_item in collectLogs)
+                {
+                    LogsToView.Add(log_item);
+                }
+            });
+                /*bool needRefresh = false;
                 foreach (LogcatItem log_item in collectLogs)
                 {
                     if (LogcatList.Items.Count > LogLimitCount)
@@ -203,10 +234,11 @@ namespace LogcatToolWin
                         }
                     }
                 }
-                if (needRefresh) LogcatList.Items.Refresh();
-                if ((IsAutoScroll) && (LogcatList.Items.Count > 0))
+                if (needRefresh) LogcatList.Items.Refresh();*/
+                /*if ((IsAutoScroll) && (LogcatList.Items.Count > 0))
                 {
-                    LogcatList.ScrollIntoView(LogcatList.Items[LogcatList.Items.Count - 1]);
+                    LogcatList.SelectedIndex = LogcatList.Items.Count - 1;
+                    LogcatList.ScrollIntoView(LogcatList.SelectedItem);
                 }
                 /*if (LogcatList.Items.Count > LogLimitCount)
                 {
@@ -229,9 +261,22 @@ namespace LogcatToolWin
                     }
                 }*/
                 //LogcatList.Items.Refresh();
-            });
+            //});
         }
 
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (!IsAutoScroll) return;
+            if (VisualTreeHelper.GetChildrenCount(LogcatList) > 0)
+            {
+                Decorator border = VisualTreeHelper.GetChild(LogcatList, 0) as Decorator;
+                if (border != null)
+                {
+                    ScrollViewer scroll = border.Child as ScrollViewer;
+                    if (scroll != null) scroll.ScrollToBottom();
+                }
+            }
+        }
         /// <summary>
         /// Handles click on the button by displaying a message box.
         /// </summary>
@@ -267,7 +312,8 @@ namespace LogcatToolWin
         {
             Dispatcher.InvokeAsync(() =>
             {
-                LogcatList.Items.Clear();
+                LogsToView.Clear();
+                //LogcatList.Items.Clear();
             });
         }
 
