@@ -77,6 +77,11 @@
             <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="4" HorizontalContentAlignment="Stretch"
                       ItemsSource="{Binding}"
                       Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy To Clipboard" Name="CopyLogItem" Click="CopyLogItem_OnClick" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
                 <!--<Style TargetType="ListViewItem">
                     <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" />
                     <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}"/>

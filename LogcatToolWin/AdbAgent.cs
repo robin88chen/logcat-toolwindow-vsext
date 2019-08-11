@@ -23,7 +23,7 @@ namespace LogcatToolWin
 
     public class AdbAgent
     {
-        public static Action<LogcatOutputToolWindowControl.LogcatItem.Level, string, int, string, string> OnOutputLogcat;
+        public static Action<LogcatOutputToolWindowControl.LogcatItem.Level, string, int, string, string, string> OnOutputLogcat;
         public bool IsDeviceReady = false;
         public string DeviceName;
         public static Action<string, bool> OnDeviceChecked;
@@ -278,7 +278,7 @@ namespace LogcatToolWin
                 Debug.WriteLine("pid exception " + e.Message);
             }
             string msg_token = msg.Substring(pid_split + 2);
-            OnOutputLogcat(log_level, time_token, pid, tag_token, msg_token);
+            OnOutputLogcat(log_level, time_token, pid, tag_token, msg_token, outLine.Data);
         }
     }
 }

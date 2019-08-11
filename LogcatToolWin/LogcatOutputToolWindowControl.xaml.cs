@@ -63,6 +63,7 @@ namespace LogcatToolWin
             public int PidToken { get; set; }
             public string TagToken { get; set; }
             public string TextToken { get; set; }
+            public string RawContent { get; set; }
         }
         //List<LogcatItem> DeferredLogs = new List<LogcatItem>();
         ObservableCollection<LogcatItem> LogsToView;
@@ -175,7 +176,7 @@ namespace LogcatToolWin
         }
 
         void OnLogcatOutput(LogcatItem.Level level_token, string time_token, int pid_token,
-            string tag_token, string msg_token)
+            string tag_token, string msg_token, string raw_msg)
         {
             LogcatItem logcat_item = new LogcatItem()
             {
@@ -183,7 +184,8 @@ namespace LogcatToolWin
                 TimeToken = time_token,
                 PidToken = pid_token,
                 TagToken = tag_token,
-                TextToken = msg_token
+                TextToken = msg_token,
+                RawContent = raw_msg
             };
             Dispatcher.InvokeAsync(() =>
             {
@@ -535,6 +537,14 @@ namespace LogcatToolWin
             WritableSettingsStore configurationSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
             configurationSettingsStore.CreateCollection(LogcatOutputToolWindowControl.StoreCategoryName);
             configurationSettingsStore.SetBoolean(StoreCategoryName, StorePropertyAutoScrollName, IsAutoScroll);
+        }
+
+        public void CopyLogItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            LogcatItem item = LogcatList.SelectedItem as LogcatItem;
+            if (item == null) return;
+            Clipboard.SetText(item.RawContent);
+            MessageBox.Show("Logcat Copied");
         }
     }
 }
