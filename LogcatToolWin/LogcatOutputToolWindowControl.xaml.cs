@@ -546,5 +546,14 @@ namespace LogcatToolWin
             Clipboard.SetText(item.RawContent);
             MessageBox.Show("Logcat Copied");
         }
+
+        private void ProcessOnly_OnClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void ProcessNameCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
