@@ -13,7 +13,7 @@ namespace LogcatToolWin
         public EditFilterDialog(LogcatOutputToolWindowControl tool_ctrl) : base()
         {
             Title = "Add New Filter";
-            Height = 320;
+            Height = 370;
             Width = 320;
             EditFilterDialogControl.ToClose = CloseDialog;
             Content = new EditFilterDialogControl(tool_ctrl);

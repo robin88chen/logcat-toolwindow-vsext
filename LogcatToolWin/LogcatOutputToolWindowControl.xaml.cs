@@ -41,6 +41,7 @@ namespace LogcatToolWin
         public static string StorePropertyFilterLevelName = "Level";
         public static string StorePropertyFilterPidName = "Pid";
         public static string StorePropertyFilterMsgName = "Msg";
+        public static string StorePropertyFilterPackageName = "Pkg";
 
         public static RoutedCommand DeleteFilter = new RoutedCommand();
         public static RoutedCommand EditFilter = new RoutedCommand();
@@ -366,7 +367,7 @@ namespace LogcatToolWin
             FilterListBox.Items.Add(newItem);*/
         }
 
-        public void AddFilterItem(string name, string tag, int pid, string text,
+        public void AddFilterItem(string name, string tag, int pid, string text, string package,
             LogcatItem.Level level, bool isNew)
         {
             string xaml_item = XamlWriter.Save(FilterTemplateItem);
@@ -385,28 +386,30 @@ namespace LogcatToolWin
                 TokenByLevel = level,
                 TokenByPid = pid,
                 TokenByTag = tag,
-                TokenByText = text
+                TokenByText = text,
+                TokenByPackage = package
             };
             FilterListBox.Items.Add(newCheckbox);
 
             if (isNew)
             {
-                CreateFilterStoreData(name, tag, pid, text, level);
+                CreateFilterStoreData(name, tag, pid, text, package, level);
             }
         }
-        public void ChangeFilterItem(CheckBox chk_box, string tag, int pid, string text,
+        public void ChangeFilterItem(CheckBox chk_box, string tag, int pid, string text, string package,
             LogcatItem.Level level)
         {
             LogFilterData filter_data = chk_box.DataContext as LogFilterData;
             filter_data.TokenByTag = tag;
             filter_data.TokenByPid = pid;
             filter_data.TokenByText = text;
+            filter_data.TokenByPackage = package;
             filter_data.TokenByLevel = level;
 
-            CreateFilterStoreData(chk_box.Name, tag, pid, text, level);
+            CreateFilterStoreData(chk_box.Name, tag, pid, text, package, level);
         }
 
-        public void CreateFilterStoreData(string name, string tag, int pid, string text,
+        public void CreateFilterStoreData(string name, string tag, int pid, string text, string package,
             LogcatItem.Level level)
         {
             SettingsManager settingsManager = new ShellSettingsManager(LogcatOutputToolWindowCommand.Instance.ServiceProvider);
@@ -421,6 +424,8 @@ namespace LogcatToolWin
                 LogcatOutputToolWindowControl.StorePropertyFilterPidName, pid);
             configurationSettingsStore.SetString(filter_sub_collection,
                 LogcatOutputToolWindowControl.StorePropertyFilterMsgName, text);
+            configurationSettingsStore.SetString(filter_sub_collection,
+                LogcatOutputToolWindowControl.StorePropertyFilterPackageName, package);
             configurationSettingsStore.SetInt32(filter_sub_collection,
                 LogcatOutputToolWindowControl.StorePropertyFilterLevelName, (int)level);
         }
@@ -444,9 +449,11 @@ namespace LogcatToolWin
                         LogcatOutputToolWindowControl.StorePropertyFilterPidName, 0);
                     string msg = settingsStore.GetString(filter_sub_collection,
                         LogcatOutputToolWindowControl.StorePropertyFilterMsgName, "");
+                    string pkg = settingsStore.GetString(filter_sub_collection,
+                        LogcatOutputToolWindowControl.StorePropertyFilterPackageName, "");
                     int level = settingsStore.GetInt32(filter_sub_collection,
                         LogcatOutputToolWindowControl.StorePropertyFilterLevelName, 0);
-                    AddFilterItem(name, tag, pid, msg, 
+                    AddFilterItem(name, tag, pid, msg, pkg,
                         (LogcatOutputToolWindowControl.LogcatItem.Level)level, false);
                 }
             }
@@ -514,6 +521,7 @@ namespace LogcatToolWin
             LogFilterData filter_data = chk_box.DataContext as LogFilterData;
             if (chk_box.IsChecked == true)
             {
+                filter_data.RetrievePackagePid(adb);
                 LogcatList.Items.Filter += filter_data.IsFilterSelected;
             }
             else

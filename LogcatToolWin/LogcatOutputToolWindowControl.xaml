@@ -11,7 +11,7 @@
              Name="MyToolWindow">
     <Grid>
         <DockPanel>
-            <ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+            <!-- ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" -->
                 <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top"
                      Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" >
                     <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
@@ -50,7 +50,7 @@
                     <Label x:Name="AutoScrollLabel" Content="Auto Scroll " Height="31" VerticalAlignment="Top"
                        Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
                 </ToolBar>
-            <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top" 
+            <!-- ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top" 
                          Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
                 <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
                         <CheckBox Content="Process Only" Click="ProcessOnly_OnClick" 
@@ -59,8 +59,8 @@
                     </Grid>
                 <ComboBox x:Name="ProcessNameCombo" HorizontalAlignment="Left" Height="30" Width="200" IsEditable="True" IsDropDownOpen="False"
                           SelectionChanged="ProcessNameCombo_SelectionChanged"></ComboBox>
-            </ToolBar>
-            </ToolBarTray>
+            </ -->
+            <!--/> < -->
             <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4" HorizontalContentAlignment="Stretch"
                      Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
                 <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick" 

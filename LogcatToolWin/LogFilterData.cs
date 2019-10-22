@@ -14,6 +14,8 @@ namespace LogcatToolWin
         public int TokenByPid;
         public string TokenByText;
         public LogcatOutputToolWindowControl.LogcatItem.Level TokenByLevel;
+        public string TokenByPackage;
+        private int PackagePid;
         public bool IsFilterSelected(object obj)
         {
             LogcatOutputToolWindowControl.LogcatItem item = obj as LogcatOutputToolWindowControl.LogcatItem;
@@ -25,6 +27,10 @@ namespace LogcatToolWin
             if (TokenByPid != 0)
             {
                 if (IsFilterOutByPid(item)) return false;
+            }
+            if (PackagePid != 0)
+            {
+                if (IsFilterOutByPackagePid(item)) return false;
             }
             if ((TokenByTag != null) && (TokenByTag.Length > 0))
             {
@@ -46,6 +52,11 @@ namespace LogcatToolWin
             if (item.PidToken != TokenByPid) return true;
             return false;
         }
+        bool IsFilterOutByPackagePid(LogcatOutputToolWindowControl.LogcatItem item)
+        {
+            if (item.PidToken != PackagePid) return true;
+            return false;
+        }
         bool IsFilterOutByLevel(LogcatOutputToolWindowControl.LogcatItem item)
         {
             if ((int)item.LevelToken < (int)TokenByLevel) return true;
@@ -55,6 +66,18 @@ namespace LogcatToolWin
         {
             if (item.TextToken.Contains(TokenByText)) return false;
             return true;
+        }
+
+        public void RetrievePackagePid(AdbAgent adb)
+        {
+            PackagePid = 0;
+            AdbAgent.OnPidGreped = OnPidGreped;
+            if (string.IsNullOrEmpty(TokenByPackage)) return;
+            adb.AdbGrepPid(TokenByPackage);
+        }
+        private void OnPidGreped(int pid)
+        {
+            PackagePid = pid;
         }
     }
 }

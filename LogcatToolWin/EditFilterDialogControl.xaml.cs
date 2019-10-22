@@ -49,15 +49,15 @@ namespace LogcatToolWin
             int sel_index = FilterByLevelCombo.SelectedIndex;
             if (IsNew)
             {
-                ToolCtrl.AddFilterItem(FilterNameText.Text, FilterByTagText.Text, pid,
-                   FilterByMsgText.Text,
+                ToolCtrl.AddFilterItem(FilterNameText.Text, FilterByTagText.Text, pid, 
+                   FilterByMsgText.Text, FilterByPackageText.Text,
                     (LogcatOutputToolWindowControl.LogcatItem.Level)FilterByLevelCombo.SelectedIndex,
                     IsNew);
             }
             else
             {
                 ToolCtrl.ChangeFilterItem(checkBox, FilterByTagText.Text, pid,
-                   FilterByMsgText.Text,
+                   FilterByMsgText.Text, FilterByPackageText.Text,
                     (LogcatOutputToolWindowControl.LogcatItem.Level)FilterByLevelCombo.SelectedIndex);
             }
             ToClose?.Invoke();
@@ -74,6 +74,7 @@ namespace LogcatToolWin
             FilterByPidText.Text = filter_data.TokenByPid.ToString();
             FilterByMsgText.Text = filter_data.TokenByText;
             FilterByLevelCombo.SelectedIndex = (int)filter_data.TokenByLevel;
+            FilterByPackageText.Text = filter_data.TokenByPackage;
             IsNew = false;
         }
 

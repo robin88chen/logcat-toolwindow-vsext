@@ -29,6 +29,7 @@ namespace LogcatToolWin
         public static Action<string, bool> OnDeviceChecked;
         public string AdbExePath;
         public static Action ToOpenSettingDlg;
+        public static Action<int> OnPidGreped;
 
         Process outputProcess = null;
         public AdbAgent()
@@ -114,7 +115,7 @@ namespace LogcatToolWin
           CloseHandle(hChildStd_OUT_Wr);
           return "";
       }*/
-        public void ProceedAdbCommandToExit(string cmd, EventHandler handler)
+        public void ProceedAdbCommandToExit(string cmd, EventHandler handler, bool waitForExit)
         {
             Process process = new Process();
             string full_cmd = AdbExePath + " "; // "c:/Develop/Android/SDK/platform-tools/adb.exe "; // + cmd;
@@ -143,7 +144,10 @@ namespace LogcatToolWin
             }
             //process.BeginOutputReadLine();
             //process.BeginErrorReadLine();
-            //process.WaitForExit();
+            if (waitForExit)
+            {
+                process.WaitForExit();
+            }
             //* Read the output (or the error)
             //string output = process.StandardOutput.ReadToEnd();
             //MessageBox.Show(output);
@@ -192,12 +196,12 @@ namespace LogcatToolWin
         }
         public void CheckAdbDevice()
         {
-            ProceedAdbCommandToExit("devices", new EventHandler(AdbCheckDeviceHandler));
+            ProceedAdbCommandToExit("devices", new EventHandler(AdbCheckDeviceHandler), false);
         }
         public void StartAdbLogcat()
         {
             // 開始前先清除前面的, 免得因為前面超多, 會 Hang住
-            ProceedAdbCommandToExit("logcat -b all -c", null);
+            ProceedAdbCommandToExit("logcat -b all -c", null, false);
             ProceedAdbCommandToOutput("logcat -v time", new DataReceivedEventHandler(OutputHandler));
         }
         public void StopAdbLogcat()
@@ -279,6 +283,34 @@ namespace LogcatToolWin
             }
             string msg_token = msg.Substring(pid_split + 2);
             OnOutputLogcat(log_level, time_token, pid, tag_token, msg_token, outLine.Data);
+        }
+
+        public void AdbGrepPid(string package_name)
+        {
+            ProceedAdbCommandToExit($"shell ps | grep {package_name}", new EventHandler(AdbGrepPidHandler), true);
+        }
+        void AdbGrepPidHandler(object sender, System.EventArgs ev)
+        {
+            Process process = sender as Process;
+            string output = process.StandardOutput.ReadToEnd();
+            if (string.IsNullOrEmpty(output)) return;
+            string[] msg_line = output.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string msg in msg_line)
+            {
+                string[] tokens = msg.Split(new char[] { '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (tokens.Length < 2) continue;
+                string pid_string = tokens[1];
+                int pid = Convert.ToInt32(pid_string);
+                if (pid > 0)
+                {
+                    Debug.WriteLine($"Grep PID = {pid}");
+                    if (OnPidGreped != null)
+                    {
+                        OnPidGreped(pid);
+                    }
+                    return;
+                }
+            }
         }
     }
 }

@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LogcatToolWin"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             mc:Ignorable="d" d:DesignWidth="300" Height="351.86">
     <Grid>
         <Label Content="Filter Name" HorizontalAlignment="Left" Margin="29,25,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="FilterNameText" HorizontalAlignment="Left" Height="23" Margin="132,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
@@ -16,8 +15,8 @@
         <TextBox x:Name="FilterByMsgText" HorizontalAlignment="Left" Height="23" Margin="132,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
         <Label Content="Filter by PID" HorizontalAlignment="Left" Margin="29,169,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="FilterByPidText" HorizontalAlignment="Left" Height="23" Margin="132,169,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
-        <Label Content="Filter by Log Level" HorizontalAlignment="Left" Margin="29,211,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.168,0.708"/>
-        <ComboBox x:Name="FilterByLevelCombo" HorizontalAlignment="Left" Margin="161,211,0,0" VerticalAlignment="Top" Width="129" SelectedIndex="0" IsReadOnly="True">
+        <Label Content="Filter by Log Level" HorizontalAlignment="Left" Margin="29,255,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.168,0.708"/>
+        <ComboBox x:Name="FilterByLevelCombo" HorizontalAlignment="Left" Margin="161,255,0,0" VerticalAlignment="Top" Width="129" SelectedIndex="0" IsReadOnly="True">
             <ComboBoxItem Content="Verbose"/>
             <ComboBoxItem Content="Debug"/>
             <ComboBoxItem Content="Info"/>
@@ -25,8 +24,10 @@
             <ComboBoxItem Content="Error"/>
             <ComboBoxItem Content="Fatal"/>
         </ComboBox>
-        <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="43,259,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" Click="OK_OnClick"/>
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="182,259,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.355,0.556" IsCancel="True"/>
+        <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="42,306,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" Click="OK_OnClick"/>
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="180,306,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.355,0.556" IsCancel="True"/>
+        <Label Content="Filter by Package" HorizontalAlignment="Left" Margin="29,215,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="FilterByPackageText" HorizontalAlignment="Left" Height="23" Margin="132,215,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158"/>
 
     </Grid>
 </UserControl>
