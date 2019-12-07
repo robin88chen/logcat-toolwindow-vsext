@@ -5,15 +5,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LogcatToolWin"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Width="300" Height="160">
-    <Grid Margin="0">
+             d:DesignHeight="360" d:DesignWidth="300" Width="300" Height="360">
+    <Grid Margin="0,0,0,0">
         <Label Content="Adb Path" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="AdbPathText" HorizontalAlignment="Left" Height="23" Margin="112,26,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="140"/>
         <Label Content="Maximun Logs" HorizontalAlignment="Left" Margin="10,77,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="LogLimitText" HorizontalAlignment="Left" Height="23" Margin="112,77,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="178"/>
-        <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="37,124,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" Click="OK_OnClick"/>
-        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="201,124,0,0" VerticalAlignment="Top" Width="75" IsCancel="True" Click="Cancel_OnClick"/>
+        <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Left" Margin="28,320,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" Click="OK_OnClick"/>
+        <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Left" Margin="203,320,0,0" VerticalAlignment="Top" Width="75" IsCancel="True" Click="Cancel_OnClick" RenderTransformOrigin="0.498,5.075"/>
         <Button x:Name="BrowseButton" Content="..." HorizontalAlignment="Left" Margin="257,26,-32,0" VerticalAlignment="Top" Width="30" Height="25" Click="Browse_OnClick"/>
+        <Separator HorizontalAlignment="Left" Height="18" Margin="0,108,0,0" VerticalAlignment="Top" Width="300"/>
+        <Label Content="Level Column Width" HorizontalAlignment="Left" Margin="10,126,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="LevelWidthText" HorizontalAlignment="Left" Height="23" Margin="149,126,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141" RenderTransformOrigin="0.224,0.38"/>
+        <Label Content="Time Column Width" HorizontalAlignment="Left" Margin="10,157,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TimeWidthText" HorizontalAlignment="Left" Height="23" Margin="149,157,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141" RenderTransformOrigin="0.224,0.38"/>
+        <Label Content="PID Column Width" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="PIDWidthText" HorizontalAlignment="Left" Height="23" Margin="149,191,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141" RenderTransformOrigin="0.224,0.38"/>
+        <Label Content="Tag Column Width" HorizontalAlignment="Left" Margin="10,225,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TagWidthText" HorizontalAlignment="Left" Height="23" Margin="149,225,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141" RenderTransformOrigin="0.224,0.38"/>
+        <Label Content="Text Column Width" HorizontalAlignment="Left" Margin="10,262,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TextWidthText" HorizontalAlignment="Left" Height="23" Margin="149,261,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="141" RenderTransformOrigin="0.224,0.38"/>
 
     </Grid>
 </UserControl>

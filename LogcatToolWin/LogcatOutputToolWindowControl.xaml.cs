@@ -36,6 +36,11 @@ namespace LogcatToolWin
         public static string StorePropertyAdbPathName = "AdbPath";
         public static string StorePropertyLogsLimitName = "LogsLimit";
         public static string StorePropertyAutoScrollName = "AutoScroll";
+        public static string StorePropertyLevelWidthName = "LevelColumnWidth";
+        public static string StorePropertyTimeWidthName = "TimeColumnWidth";
+        public static string StorePropertyPidWidthName = "PidColumnWidth";
+        public static string StorePropertyTagWidthName = "TagColumnWidth";
+        public static string StorePropertyTextWidthName = "TextColumnWidth";
         public static string StoreFilterCollectionName = "LogcatOutputToolSettings\\Filter";
         public static string StorePropertyFilterTagName = "Tag";
         public static string StorePropertyFilterLevelName = "Level";
@@ -48,6 +53,9 @@ namespace LogcatToolWin
 
         bool HasLoaded = false;
         bool IsAutoScroll = false;
+
+        public uint[] ColumnWidth = new uint[5];
+
         public class LogcatItem
         {
             public enum Level
@@ -143,6 +151,12 @@ namespace LogcatToolWin
             LogLimitCount = log_limit;
             adb.AdbExePath = adb_path;
             IsAutoScroll = is_auto;
+            ColumnWidth[0] = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyLevelWidthName, 60);
+            ColumnWidth[1] = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyTimeWidthName, 120);
+            ColumnWidth[2] = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyPidWidthName, 60);
+            ColumnWidth[3] = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyTagWidthName, 120);
+            ColumnWidth[4] = configurationSettingsStore.GetUInt32(StoreCategoryName, StorePropertyTextWidthName, 600);
+
             if (IsAutoScroll)
             {
                 Dispatcher.InvokeAsync(() => { AutoScrollLabel.Content = "Auto Scroll On"; });
@@ -555,13 +569,14 @@ namespace LogcatToolWin
             MessageBox.Show("Logcat Copied");
         }
 
-        private void ProcessOnly_OnClick(object sender, RoutedEventArgs e)
+        public void RefreshColumnsWidth()
         {
-
-        }
-        private void ProcessNameCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
+            GridView grid = LogcatList.View as GridView;
+            if (grid == null) return;
+            for (int i = 0; i < 5; i++)
+            {
+                grid.Columns[i].Width = ColumnWidth[i];
+            }
         }
     }
 }

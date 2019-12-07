@@ -39,6 +39,11 @@ namespace LogcatToolWin
                 LogLimitText.Text = ToolCtrl.LogLimitCount.ToString();
                 AdbPathText.Text = ToolCtrl.adb.AdbExePath;
             });
+            LevelWidthText.Text = ToolCtrl.ColumnWidth[0].ToString();
+            TimeWidthText.Text = ToolCtrl.ColumnWidth[1].ToString();
+            PIDWidthText.Text = ToolCtrl.ColumnWidth[2].ToString();
+            TagWidthText.Text = ToolCtrl.ColumnWidth[3].ToString();
+            TextWidthText.Text = ToolCtrl.ColumnWidth[4].ToString();
         }
 
         private void OK_OnClick(object sender, RoutedEventArgs e)
@@ -61,6 +66,30 @@ namespace LogcatToolWin
                 LogcatOutputToolWindowControl.StorePropertyLogsLimitName, log_limit);
             ToolCtrl.LogLimitCount = log_limit;
             ToolCtrl.adb.AdbExePath = AdbPathText.Text;
+
+            uint level_width = Convert.ToUInt32(LevelWidthText.Text);
+            configurationSettingsStore.SetUInt32(LogcatOutputToolWindowControl.StoreCategoryName,
+                LogcatOutputToolWindowControl.StorePropertyLevelWidthName, level_width);
+            uint time_width = Convert.ToUInt32(TimeWidthText.Text);
+            configurationSettingsStore.SetUInt32(LogcatOutputToolWindowControl.StoreCategoryName,
+                LogcatOutputToolWindowControl.StorePropertyTimeWidthName, time_width);
+            uint pid_width = Convert.ToUInt32(PIDWidthText.Text);
+            configurationSettingsStore.SetUInt32(LogcatOutputToolWindowControl.StoreCategoryName,
+                LogcatOutputToolWindowControl.StorePropertyPidWidthName, pid_width);
+            uint tag_width = Convert.ToUInt32(TagWidthText.Text);
+            configurationSettingsStore.SetUInt32(LogcatOutputToolWindowControl.StoreCategoryName,
+                LogcatOutputToolWindowControl.StorePropertyTagWidthName, tag_width);
+            uint text_width = Convert.ToUInt32(TextWidthText.Text);
+            configurationSettingsStore.SetUInt32(LogcatOutputToolWindowControl.StoreCategoryName,
+                LogcatOutputToolWindowControl.StorePropertyTextWidthName, text_width);
+
+            ToolCtrl.ColumnWidth[0] = level_width;
+            ToolCtrl.ColumnWidth[1] = time_width;
+            ToolCtrl.ColumnWidth[2] = pid_width;
+            ToolCtrl.ColumnWidth[3] = tag_width;
+            ToolCtrl.ColumnWidth[4] = text_width;
+            ToolCtrl.RefreshColumnsWidth();
+
             ToClose?.Invoke();
         }
 
