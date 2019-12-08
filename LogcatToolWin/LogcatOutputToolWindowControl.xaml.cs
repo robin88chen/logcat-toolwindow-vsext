@@ -388,8 +388,12 @@ namespace LogcatToolWin
             StringReader stringReader = new StringReader(xaml_item);
             XmlReader xmlReader = XmlReader.Create(stringReader);
             CheckBox newCheckbox = (CheckBox)XamlReader.Load(xmlReader);
+            TextBlock tb = new TextBlock();
+            tb.Text = name;
+            tb.Foreground = Brushes.MediumSeaGreen;
             newCheckbox.Name = name;
-            newCheckbox.Content = name;
+            newCheckbox.Content = tb; //name;
+            
             newCheckbox.Visibility = Visibility.Visible;
             (newCheckbox.ContextMenu.Items[0] as MenuItem).Command = DeleteFilter;
             (newCheckbox.ContextMenu.Items[1] as MenuItem).Command = EditFilter;

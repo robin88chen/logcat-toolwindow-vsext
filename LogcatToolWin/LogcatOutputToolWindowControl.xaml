@@ -66,9 +66,7 @@
                 <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick" 
                      Background="{DynamicResource {x:Static vsshell:VsBrushes.MenuKey}}" 
                      Foreground="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}"   />
-                <CheckBox x:Name="FilterTemplateItem" HorizontalContentAlignment="Center" Content="FilterTemp" Click="FilterTemplate_Clicked" Visibility="Collapsed"
-                          Background="{DynamicResource {x:Static vsshell:VsBrushes.MenuKey}}" 
-                          Foreground="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}">
+                <CheckBox x:Name="FilterTemplateItem" HorizontalContentAlignment="Center" Content="FilterTemp" Click="FilterTemplate_Clicked" Visibility="Collapsed">
                     <CheckBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete"/>
