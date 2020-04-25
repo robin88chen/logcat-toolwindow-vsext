@@ -22,6 +22,7 @@ namespace LogcatToolWin
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.Windows.Media;
+    using System.Linq;
 
     /// <summary>
     /// Interaction logic for LogcatOutputToolWindowControl.
@@ -567,9 +568,18 @@ namespace LogcatToolWin
 
         public void CopyLogItem_OnClick(object sender, RoutedEventArgs e)
         {
-            LogcatItem item = LogcatList.SelectedItem as LogcatItem;
-            if (item == null) return;
-            Clipboard.SetText(item.RawContent);
+            if ((LogcatList.SelectedItems == null) || (LogcatList.SelectedItems.Count == 0)) return;
+            string contents = "";
+            for (int i = 0; i < LogcatList.SelectedItems.Count; i++)
+            {
+                LogcatItem item = LogcatList.SelectedItems[i] as LogcatItem;
+                contents += item.RawContent;
+                if (i < LogcatList.SelectedItems.Count - 1)
+                {
+                    contents += "\n";
+                }
+            }
+            Clipboard.SetText(contents);
             MessageBox.Show("Logcat Copied");
         }
 
