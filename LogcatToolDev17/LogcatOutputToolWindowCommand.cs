@@ -57,7 +57,7 @@ namespace LogcatToolDev17
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
+        public AsyncPackage ServiceProvider
         {
             get
             {

@@ -5,14 +5,145 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
-             Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
+             Foreground="{DynamicResource VsBrushes.WindowText}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300"
              Name="MyToolWindow">
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Margin="10" HorizontalAlignment="Center">LogcatOutputToolWindow</TextBlock>
-            <Button Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
-        </StackPanel>
+        <DockPanel>
+            <!-- ToolBarTray DockPanel.Dock="Top" Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" -->
+                <ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top"
+                     Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" >
+                    <Button x:Name="ConnectDeviceButton" Content="" Height="30" VerticalAlignment="Center" Width="30" ToolTip="Connect Device" Click="ConnectDevice_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/smartphone.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label x:Name="DeviceStateLabel" Content="Device" Height="31" VerticalAlignment="Top" 
+                       Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"/>
+                    <Button x:Name="CancelLogcatButton" Content="" Height="30" VerticalAlignment="Top" Width="30" Click="CancelLogcat_OnClick" ToolTip="Cancel Logcat">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/cancel.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label Content="Cancel Logcat" 
+                       Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"/>
+                    <Button x:Name="ClearLogsButton" Height="30" VerticalAlignment="Top" Width="30" ToolTip="Clear All Logs" Click="ClearLogs_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/ClearAll.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label Content="Clear Logs"
+                       Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
+                    <Button x:Name="SettingButton" Content="" Height="30" VerticalAlignment="Top" Width="30" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Click="Setting_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/settings.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label Content="Settings" Height="31" VerticalAlignment="Top" 
+                       Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
+                    <Button x:Name="AutoScrollButton" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="30" Click="AutoScroll_OnClick">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/scroll_down.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Label x:Name="AutoScrollLabel" Content="Auto Scroll " Height="31" VerticalAlignment="Top"
+                       Foreground="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}" />
+                </ToolBar>
+            <!-- ToolBar VerticalContentAlignment="Bottom" Margin="0" DockPanel.Dock="Top" 
+                         Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                        <CheckBox Content="Process Only" Click="ProcessOnly_OnClick" 
+                          Background="{DynamicResource {x:Static vsshell:VsBrushes.MenuKey}}" 
+                          Foreground="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}" />
+                    </Grid>
+                <ComboBox x:Name="ProcessNameCombo" HorizontalAlignment="Left" Height="30" Width="200" IsEditable="True" IsDropDownOpen="False"
+                          SelectionChanged="ProcessNameCombo_SelectionChanged"></ComboBox>
+            </ -->
+            <!--/> < -->
+            <ListBox x:Name="FilterListBox" Width="157" VerticalContentAlignment="Stretch" Margin="4" HorizontalContentAlignment="Stretch"
+                     Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+                <Button x:Name="AddFilterButton" Content="Add Filter" HorizontalContentAlignment="Center" Click="AddFilter_OnClick" 
+                     Background="{DynamicResource {x:Static vsshell:VsBrushes.MenuKey}}" 
+                     Foreground="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}"   />
+                <CheckBox x:Name="FilterTemplateItem" HorizontalContentAlignment="Center" Content="FilterTemp" Click="FilterTemplate_Clicked" Visibility="Collapsed">
+                    <CheckBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete"/>
+                            <MenuItem Header="Edit..."/>
+                        </ContextMenu>
+                    </CheckBox.ContextMenu>
+                </CheckBox>
+            </ListBox>
+            <ListView x:Name="LogcatList" VerticalContentAlignment="Stretch" MinHeight="120" Margin="4" HorizontalContentAlignment="Stretch"
+                      ItemsSource="{Binding}"
+                      Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy To Clipboard" Name="CopyLogItem" Click="CopyLogItem_OnClick" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <!--<Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" />
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}"/>
+                </Style> -->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" />
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.MenuKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.MenuKey}}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <Border BorderThickness="2">
+                                                <GridViewRowPresenter Grid.RowSpan="2" 
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                    Content="{TemplateBinding Content}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding LevelToken}" Value="Debug">
+                                <Setter Property="Foreground" Value="MediumSeaGreen"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LevelToken}" Value="Info">
+                                <Setter Property="Foreground" Value="DeepSkyBlue"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LevelToken}" Value="Warning">
+                                <Setter Property="Foreground" Value="Goldenrod"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LevelToken}" Value="Error">
+                                <Setter Property="Foreground" Value="IndianRed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LevelToken}" Value="Fatal">
+                                <Setter Property="Foreground" Value="DarkViolet"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridView.ColumnHeaderContainerStyle>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarGradientKey}}" />
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.MenuTextKey}}" />
+                            </Style>
+                        </GridView.ColumnHeaderContainerStyle>
+                        <GridViewColumn Header="Level" Width="60" DisplayMemberBinding="{Binding LevelToken}"/>
+                        <GridViewColumn Header="Time" Width="120" DisplayMemberBinding="{Binding TimeToken}"/>
+                        <GridViewColumn Header="PID" Width="60" DisplayMemberBinding="{Binding PidToken}"/>
+                        <GridViewColumn Header="Tag" Width="120" DisplayMemberBinding="{Binding TagToken}"/>
+                        <GridViewColumn Header="Text" Width="600" DisplayMemberBinding="{Binding TextToken}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
     </Grid>
 </UserControl>
